@@ -2,8 +2,8 @@
 #include<Platform/Window.h>
 #include<SDL3/SDL.h>
 
-#include "../../Modules/Framework/App.h"
 #include "Events/Event.h"
+#include "Framework/App.h"
 #include "Rendering/Renderer.h"
 #include "Rendering/RenderPass.h"
 #include "Rendering/Display.h"
