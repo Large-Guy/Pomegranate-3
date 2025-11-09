@@ -16,14 +16,14 @@
 Window::~Window() = default;
 
 
-Pointer<Window> Window::create() {
-    Pointer<Window> window = nullptr;
+std::shared_ptr<Window> Window::create() {
+    std::shared_ptr<Window> window = nullptr;
 #ifdef __APPLE__
-    window = newPtr<MacOSWindow>();
+    window = std::make_shared<MacOSWindow>();
 #elif __linux__
-    window = newPtr<WindowsWindow>();
+    window = std::make_shared<WindowsWindow>();
 #elif WIN32
-    window = newPtr<LinuxWindow>();
+    window = std::make_shared<LinuxWindow>();
 #endif
     
     return window;

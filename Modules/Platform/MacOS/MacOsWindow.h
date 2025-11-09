@@ -5,12 +5,14 @@
 
 
 class MacOSWindow : public StandardWindow {
-    void* blur = nullptr;
-    float blurRadius = 15.0f;
-protected:
-    void rebuild() override;
 public:
     void setBlurRadius(float radius) override;
+    float getBlurRadius() override;
+protected:
+    void rebuild() override;
+private:
+    void* blur = nullptr;
+    float blurRadius = 15.0f;
 };
 
 

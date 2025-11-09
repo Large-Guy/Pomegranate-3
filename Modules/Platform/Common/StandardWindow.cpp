@@ -28,10 +28,17 @@ void StandardWindow::open() {
         windowFlags |= SDL_WINDOW_BORDERLESS;
     if (flags[HighDPI])
         windowFlags |= SDL_WINDOW_HIGH_PIXEL_DENSITY;
-    this->window = SDL_CreateWindow(title.c_str(), width, height, windowFlags);  
+    this->window = SDL_CreateWindow(title.c_str(), width, height, windowFlags);
+
+    auto* weak = new std::weak_ptr<Window>(shared_from_this());
+    SDL_SetPointerProperty(SDL_GetWindowProperties(window), "pomegranate", weak);
 }
 
 void StandardWindow::close() {
+    const SDL_PropertiesID properties = SDL_GetWindowProperties(window);
+    const auto* weak = static_cast<std::weak_ptr<Window>*>(SDL_GetPointerProperty(properties, "pomegranate", nullptr));
+    delete weak;
+    SDL_SetPointerProperty(properties, "pomegranate", nullptr);
     SDL_DestroyWindow(this->window);
     this->window = nullptr;
 }
@@ -61,6 +68,23 @@ void StandardWindow::setSize(int w, int h) {
     SDL_SetWindowSize(this->window, this->width, this->height);
 }
 
+void StandardWindow::getSize(int& w, int& h) {
+    w = this->width;
+    h = this->height;
+}
+
+void StandardWindow::getPosition(int& x, int& y) {
+    SDL_GetWindowSize(this->window, &x, &y);
+}
+
+std::string StandardWindow::getTitle() {
+    return this->title;
+}
+
+float StandardWindow::getBlurRadius() {
+    return 0.0f;
+}
+
 void StandardWindow::setPosition(int x, int y) {
     if (!this->window)
         return;
@@ -71,7 +95,7 @@ void StandardWindow::setTitle(std::string title) {
     this->title = title;
     if (!this->window)
         return;
-    
+
     SDL_SetWindowTitle(this->window, title.c_str());
 }
 
@@ -80,9 +104,12 @@ void StandardWindow::setBlurRadius(float radius) {
 }
 
 void StandardWindow::display() {
-    
 }
 
 void* StandardWindow::getInternal() {
+    return this->window;
+}
+
+void* StandardWindow::getInternalRenderer() {
     return this->window;
 }

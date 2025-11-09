@@ -5,6 +5,7 @@
 #ifndef POMEGRANATE_BITFLAG_H
 #define POMEGRANATE_BITFLAG_H
 #include <cstdint>
+#include <vector>
 
 template <typename Enum>
 class BitFlag {
@@ -27,6 +28,13 @@ class BitFlag {
     };
     
 public:
+    BitFlag() : flags(0) {}
+    BitFlag(std::vector<Enum> flags) {
+        for (auto& flag : flags) {
+            set(flag, true);
+        }
+    }
+    
     void set(Enum flag, bool value) {
         if (value)
             flags |= 1 << static_cast<Enum>(flag);

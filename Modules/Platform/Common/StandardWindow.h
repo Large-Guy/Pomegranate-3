@@ -6,20 +6,15 @@
 
 
 class StandardWindow : public Window {
-    std::string title;
-    int width, height;
-    SDL_Window* window;
-protected:
-    void rebuild() override;
-    BitFlag<Flag> flags;
 public:
     StandardWindow();
+
     ~StandardWindow() override;
 
     void open() override;
 
     void close() override;
-    
+
     void show() override;
 
     void hide() override;
@@ -30,15 +25,36 @@ public:
 
     void setSize(int w, int h) override;
 
+    void getSize(int& w, int& h) override;
+
     void setPosition(int x, int y) override;
+
+    void getPosition(int& x, int& y) override;
 
     void setTitle(std::string title) override;
 
+    std::string getTitle() override;
+
     void setBlurRadius(float radius) override;
+
+    float getBlurRadius() override;
 
     void display() override;
 
     void* getInternal() override;
+
+    void* getInternalRenderer();
+
+protected:
+    void rebuild() override;
+
+    BitFlag<Flag> flags;
+
+    SDL_Window* window;
+
+private:
+    std::string title;
+    int width, height;
 };
 
 

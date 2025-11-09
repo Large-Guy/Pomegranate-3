@@ -83,3 +83,17 @@ void destroyVibrancy(void* blur) {
     auto* blurView = (__bridge ConfigurableBlurView *) blur;
     blurView = nil;
 }
+
+void setBorderlessWithTrafficLights(SDL_Window* window) {
+    SDL_PropertiesID properties = SDL_GetWindowProperties(window);
+    auto *nativeWindow = (__bridge NSWindow *) SDL_GetPointerProperty(properties, "SDL.window.cocoa.window", nullptr);
+    if (nativeWindow) {
+        // Set the style mask to include NSFullSizeContentViewWindowMask
+        // and NSWindowTitleHidden, while keeping other standard flags.
+        NSWindowStyleMask currentStyle = [nativeWindow styleMask];
+        [nativeWindow setStyleMask:currentStyle | NSFullSizeContentViewWindowMask | NSWindowTitleHidden];
+        [nativeWindow setTitlebarAppearsTransparent:YES];
+        // Allows the window background to be used for dragging
+        [nativeWindow setMovableByWindowBackground:YES]; 
+    }
+}

@@ -4,5 +4,6 @@
 
 void* createVibrancy(SDL_Window* window, float intensity);
 void destroyVibrancy(void* blur);
+void setBorderlessWithTrafficLights(SDL_Window* window);
 
 #endif //SHIFTY_VIBRANCY_HPP
