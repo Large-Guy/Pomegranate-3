@@ -47,7 +47,7 @@ void Display::target(const std::weak_ptr<CommandQueue>& queue, const std::shared
 }
 
 void Display::present() const {
-    void* textureInfo = transferBuffer->map();
+    void* textureInfo = transferBuffer->mapPtr();
 
     SDL_UpdateTexture(texture, nullptr, textureInfo, width * SDL_GetPixelFormatDetails(SDL_PIXELFORMAT_RGBA32)->bytes_per_pixel);
 

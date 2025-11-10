@@ -19,7 +19,7 @@ TransferBuffer::TransferBuffer(std::shared_ptr<Renderer> renderer, Type type, si
         default:
             throw std::runtime_error("Invalid usage");
     }
-    
+
     SDL_GPUTransferBufferCreateInfo info{};
     info.usage = flags;
     info.size = size;
@@ -31,7 +31,7 @@ TransferBuffer::~TransferBuffer() {
     SDL_ReleaseGPUTransferBuffer(static_cast<SDL_GPUDevice*>(renderer->getInternal()), buffer);
 }
 
-void* TransferBuffer::map() const {
+void* TransferBuffer::mapPtr() const {
     return SDL_MapGPUTransferBuffer(static_cast<SDL_GPUDevice*>(renderer->getInternal()), buffer, false);
 }
 

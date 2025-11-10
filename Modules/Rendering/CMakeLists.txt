@@ -25,6 +25,8 @@ set(RenderingSrc
         CopyPass.h
         Buffer.cpp
         Buffer.h
+        Vertex.cpp
+        Vertex.h
 )
 
 add_library(Rendering STATIC

@@ -9,15 +9,24 @@ public:
         Upload,
         Download
     };
+
     TransferBuffer(std::shared_ptr<Renderer> renderer, Type type, size_t size);
+
     ~TransferBuffer();
 
-    void* map() const;
+    void* mapPtr() const;
+
     void unmap() const;
+
+    template<typename T>
+    T* map() {
+        return static_cast<T*>(mapPtr());
+    }
 
     size_t size() const;
 
     void* getInternal();
+
 private:
     std::shared_ptr<Renderer> renderer;
     size_t bufferSize;

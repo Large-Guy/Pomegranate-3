@@ -2,6 +2,7 @@
 
 #include <stdexcept>
 
+#include "CopyPass.h"
 #include "SDL3/SDL_gpu.h"
 
 Buffer::Buffer(const std::shared_ptr<Renderer>& renderer, Type usage, size_t size) {
@@ -27,6 +28,27 @@ Buffer::Buffer(const std::shared_ptr<Renderer>& renderer, Type usage, size_t siz
 
 Buffer::~Buffer() {
     SDL_ReleaseGPUBuffer(static_cast<SDL_GPUDevice*>(renderer->getInternal()), this->buffer);
+}
+
+void Buffer::upload(const std::shared_ptr<CopyPass>& pass, const std::shared_ptr<TransferBuffer>& data) {
+    SDL_GPUTransferBufferLocation location{};
+    location.offset = 0;
+    location.transfer_buffer = static_cast<SDL_GPUTransferBuffer*>(data->getInternal());
+
+    SDL_GPUBufferRegion region{};
+    region.offset = 0;
+    region.size = std::min(size, data->size());
+    region.buffer = this->buffer;
+
+    SDL_UploadToGPUBuffer(static_cast<SDL_GPUCopyPass*>(pass->getInternal()), &location, &region, false);
+}
+
+void Buffer::bind(const std::shared_ptr<DrawPass>& pass) const {
+    const SDL_GPUBufferBinding binding{
+        .buffer = buffer,
+        .offset = 0,
+    };
+    SDL_BindGPUVertexBuffers(static_cast<SDL_GPURenderPass*>(pass->getInternal()), 0, &binding, 1);
 }
 
 Buffer::Type Buffer::type() {
