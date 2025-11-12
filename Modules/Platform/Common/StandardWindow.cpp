@@ -69,12 +69,17 @@ void StandardWindow::setSize(int w, int h) {
 }
 
 void StandardWindow::getSize(int& w, int& h) {
-    w = this->width;
-    h = this->height;
+    SDL_GetWindowSize(this->window, &w, &h);
+    this->width = w;
+    this->height = h;
+}
+
+void StandardWindow::getRealSize(int& w, int& h) {
+    SDL_GetWindowSizeInPixels(window, &w, &h);
 }
 
 void StandardWindow::getPosition(int& x, int& y) {
-    SDL_GetWindowSize(this->window, &x, &y);
+    SDL_GetWindowPosition(this->window, &x, &y);
 }
 
 std::string StandardWindow::getTitle() {

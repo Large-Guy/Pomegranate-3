@@ -14,11 +14,16 @@ void App::init() {
 App::~App() = default;
 
 void App::process() {
-    this->update(0.01f);
+    auto now = std::chrono::high_resolution_clock::now();
+    std::chrono::duration<double> delta = now - lastUpdate;
+
+    this->update(static_cast<float>(delta.count()));
+    lastUpdate = now;
 }
 
 void App::run() {
     init();
+    lastUpdate = std::chrono::high_resolution_clock::now();
     while (running) {
         process();
     }

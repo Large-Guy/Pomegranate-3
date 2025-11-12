@@ -39,6 +39,8 @@ public:
 
     void primitive(PrimitiveType type);
 
+    void fill(Pipeline::FillMode fillMode);
+
     void build();
 
     void bind(const std::weak_ptr<CommandQueue>& commandQueue, const std::shared_ptr<DrawPass>& pass);
@@ -46,8 +48,8 @@ public:
     void uniformPtr(Shader::Type type, int index, void* info, size_t size) const;
 
     template<typename T>
-    void uniform(Shader::Type type, const T& info) {
-        uniformPtr(type, index, &info, sizeof(T));
+    void uniform(Shader::Type type, int index, T& info) {
+        uniformPtr(type, index, static_cast<void*>(&info), sizeof(T));
     }
 
 private:

@@ -25,6 +25,6 @@ std::shared_ptr<Window> Window::create() {
 #elif WIN32
     window = std::make_shared<LinuxWindow>();
 #endif
-    
+
     return window;
 }

@@ -12,5 +12,6 @@ add_subdirectory(Modules/Platform)
 add_subdirectory(Modules/Events)
 add_subdirectory(Modules/Framework)
 add_subdirectory(Modules/Rendering)
+add_subdirectory(Modules/Layout)
 
 add_subdirectory(Examples)

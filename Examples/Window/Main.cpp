@@ -1,8 +1,9 @@
+#include <iostream>
 #include<Platform/Window.h>
-#include<SDL3/SDL.h>
 
 #include "Events/Event.h"
 #include "Framework/App.h"
+#include "Layout/Container.h"
 #include "Rendering/Buffer.h"
 #include "Rendering/CopyPass.h"
 #include "Rendering/Renderer.h"
@@ -17,6 +18,13 @@ struct Vertex {
     float r, g, b, a;
 };
 
+
+struct alignas(16) PanelUniform {
+    float screenX, screenY, screenW, screenH;
+    float rectX, rectY, rectW, rectH;
+};
+
+
 class WindowExample : public App {
 public:
     std::shared_ptr<Window> window;
@@ -26,12 +34,11 @@ public:
     std::shared_ptr<Pipeline> pipeline;
     std::shared_ptr<Buffer> buffer;
 
+    std::shared_ptr<Container> container;
+
     void start() override {
         window = Window::create();
-        renderer = std::make_shared<Renderer>();
-        target = std::make_shared<Texture>(renderer, Texture::Format::R8G8B8A8_SRGB, 800, 600,
-                                           BitFlag<Texture::Flags>({Texture::Flags::RenderTarget}));
-
+        window->setSize(800, 600);
         window->setTitle("Window Example");
         window->open();
 
@@ -41,14 +48,22 @@ public:
         window->setFlag(Window::HighDPI, true);
         window->setFlag(Window::Full, true);
 
+        renderer = std::make_shared<Renderer>();
+
+        int width, height;
+        window->getRealSize(width, height);
+        target = std::make_shared<Texture>(renderer, Texture::Format::R8G8B8A8_SRGB, width, height,
+                                           BitFlag<Texture::Flags>({Texture::Flags::RenderTarget}));
+
+
         window->setBlurRadius(5);
 
         display = std::make_shared<Display>(renderer, window);
 
         std::shared_ptr<Shader> vertex = std::make_shared<Shader>(renderer, Shader::Type::Vertex,
-                                                                  "Resources/Triangle.hlsl", 0, 0, 0, 0);
+                                                                  "Resources/Panel.hlsl", 0, 1, 0, 0);
         std::shared_ptr<Shader> fragment = std::make_shared<Shader>(renderer, Shader::Type::Fragment,
-                                                                    "Resources/Triangle.hlsl", 0, 0, 0, 0);
+                                                                    "Resources/Panel.hlsl", 0, 1, 0, 0);
 
         pipeline = std::make_shared<Pipeline>(renderer, Texture::Format::R8G8B8A8_SRGB);
         pipeline->vertex(vertex, {
@@ -71,6 +86,7 @@ public:
                          });
         pipeline->fragment(fragment);
         pipeline->primitive(Pipeline::PrimitiveType::TriangleList);
+        pipeline->fill(Pipeline::FillMode::Fill);
         pipeline->build();
 
         buffer = std::make_shared<Buffer>(renderer, Buffer::Type::Vertex, sizeof(Vertex) * 3);
@@ -115,6 +131,73 @@ public:
 
         copyPass->end();
         renderer->end();
+
+        container = std::make_shared<Container>(Container{
+            Container::Type::Horizontal,
+            {Container::Position::Label::Physical, 0.f},
+            {Container::Position::Label::Physical, 0.f},
+            {Container::Scale::Label::Physical, 1.0f},
+            {Container::Scale::Label::Physical, 1.0f}
+        });
+
+        container->appendChild(std::make_shared<Container>(Container{
+            Container::Type::Vertical,
+            {Container::Position::Label::Pixel, 0},
+            {Container::Position::Label::Pixel, 0},
+            {Container::Scale::Label::Pixel, 256.0f},
+            {Container::Scale::Label::Percent, 1.0f}
+        }));
+
+        container->appendChild(std::make_shared<Container>(Container{
+            Container::Type::Float,
+            {Container::Position::Label::Pixel, 0},
+            {Container::Position::Label::Pixel, 0},
+            {Container::Scale::Label::Auto, 0.0f},
+            {Container::Scale::Label::Auto, 0.0f}
+        }));
+
+        auto sidebar = container->getChild(0);
+        sidebar->padding = {Container::Scale::Label::Pixel, 8.0f};
+        sidebar->gap = {Container::Scale::Label::Pixel, 8.0f};
+
+        for (int i = 0; i < 16; i++) {
+            sidebar->appendChild(std::make_shared<Container>(Container{
+                Container::Type::Float,
+                {Container::Position::Label::Pixel, 16},
+                {Container::Position::Label::Pixel, 16},
+                {Container::Scale::Label::Auto, 0.0f},
+                {Container::Scale::Label::Auto, 0.0f}
+            }));
+        }
+    }
+
+    void drawRectangle(const std::weak_ptr<CommandQueue>& cmd, const std::shared_ptr<DrawPass>& pass, float x, float y,
+                       float w, float h) const {
+        pipeline->bind(cmd, pass);
+        int width, height;
+        window->getSize(width, height);
+        PanelUniform panelUniform{
+            .screenX = static_cast<float>(width) / -2.0f,
+            .screenY = static_cast<float>(height) / -2.0f,
+            .screenW = static_cast<float>(width),
+            .screenH = static_cast<float>(height),
+            .rectX = x,
+            .rectY = y,
+            .rectW = w,
+            .rectH = h
+        };
+        pipeline->uniform(Shader::Type::Vertex, 0, panelUniform);
+        pipeline->uniform(Shader::Type::Fragment, 0, panelUniform);
+        pass->drawPrimitives(6, 0, 1, 0);
+    }
+
+    void drawContainer(const std::weak_ptr<CommandQueue>& cmd, const std::shared_ptr<DrawPass>& pass,
+                       const std::shared_ptr<Container>& con) {
+        auto [x, y, width, height] = con->real();
+        drawRectangle(cmd, pass, x, y, width, height);
+        for (int i = 0; i < con->getChildCount(); i++) {
+            drawContainer(cmd, pass, con->getChild(i));
+        }
     }
 
     void update(float delta) override {
@@ -123,7 +206,20 @@ public:
             if (auto* close = event.as<WindowCloseEvent>()) {
                 quit();
             }
+            if (auto* resize = event.as<WindowResizeEvent>()) {
+                target = std::make_shared<Texture>(renderer, Texture::Format::R8G8B8A8_SRGB, resize->realWidth,
+                                                   resize->realHeight,
+                                                   BitFlag<Texture::Flags>({Texture::Flags::RenderTarget}));
+            }
         }
+
+        int width, height;
+        window->getSize(width, height);
+
+        container->width = static_cast<float>(width);
+        container->height = static_cast<float>(height);
+
+        container->computeChildren();
 
         auto cmdQueue = renderer->begin();
 
@@ -138,9 +234,7 @@ public:
         });
         draw->begin(cmdQueue);
 
-        pipeline->bind(cmdQueue, draw);
-        buffer->bind(draw);
-        SDL_DrawGPUPrimitives(static_cast<SDL_GPURenderPass*>(draw->getInternal()), 3, 1, 0, 0);
+        drawContainer(cmdQueue, draw, container);
 
         draw->end();
 
@@ -149,6 +243,8 @@ public:
         renderer->end();
 
         display->present();
+
+        //std::cout << "Framerate: " << 1.0f / delta << std::endl;
     }
 };
 

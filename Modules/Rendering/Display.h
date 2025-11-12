@@ -8,10 +8,13 @@
 class Display {
 public:
     explicit Display(const std::shared_ptr<Renderer>& renderer, const std::shared_ptr<Window>& window);
+
     ~Display();
 
     void target(const std::weak_ptr<CommandQueue>& queue, const std::shared_ptr<Texture>& renderTexture);
+
     void present() const;
+
 private:
     std::shared_ptr<Window> window;
     std::shared_ptr<Renderer> renderer;

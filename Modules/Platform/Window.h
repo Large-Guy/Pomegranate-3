@@ -33,6 +33,8 @@ public:
 
     virtual void getSize(int& width, int& height) = 0;
 
+    virtual void getRealSize(int& width, int& height) = 0;
+
     virtual void setPosition(int x, int y) = 0;
 
     virtual void getPosition(int& x, int& y) = 0;

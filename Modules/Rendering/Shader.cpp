@@ -9,25 +9,24 @@ void* Shader::getInternal() const {
     return this->shader;
 }
 
-Shader::Shader(const std::shared_ptr<Renderer>& renderer, Type type, const std::string& path, uint32_t samplers, uint32_t uniforms, uint32_t storages, uint32_t textures) {
+Shader::Shader(const std::shared_ptr<Renderer>& renderer, Type type, const std::string& path, uint32_t samplers,
+               uint32_t uniforms, uint32_t storages, uint32_t textures) {
     this->renderer = renderer;
     this->path = path;
+    this->stage = type;
+    this->samplers = samplers;
+    this->uniforms = uniforms;
+    this->storages = storages;
+    this->textures = textures;
 
-    compile(renderer, path, type, samplers, uniforms, storages, textures);   
+    compile();
 }
 
 Shader::~Shader() {
     SDL_ReleaseGPUShader(static_cast<SDL_GPUDevice*>(renderer->getInternal()), shader);
 }
 
-void Shader::compile(const std::shared_ptr<Renderer>& renderer, const std::string& path, Type stage, uint32_t samplers, uint32_t uniforms, uint32_t storages, uint32_t textures) {
-    this->path = path;
-    this->stage = stage;
-    this->samplers = samplers;
-    this->uniforms = uniforms;
-    this->storages = storages;
-    this->textures = textures;
-
+void Shader::compile() {
     SDL_GPUShaderStage shaderStage;
     switch (stage) {
         case Type::Vertex: {
@@ -79,7 +78,7 @@ void Shader::compile(const std::shared_ptr<Renderer>& renderer, const std::strin
 
     size_t codeSize;
     void* code = SDL_LoadFile(path.c_str(), &codeSize);
-    
+
     if (path.ends_with(".hlsl")) {
         std::filesystem::path filePath(path);
         std::filesystem::path shaderPath = filePath.parent_path();

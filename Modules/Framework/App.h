@@ -4,20 +4,28 @@
 
 
 class App {
-    bool running = true;
-    void init();
-    void process();
 public:
     void run();
 
     virtual ~App();
-    
+
     virtual void start();
+
     virtual void update(float delta);
+
     virtual void end();
 
     void quit();
+
     bool isRunning() const;
+
+private:
+    std::chrono::time_point<std::chrono::steady_clock> lastUpdate;
+    bool running = true;
+
+    void init();
+
+    void process();
 };
 
 

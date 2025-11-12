@@ -37,10 +37,13 @@ bool Event::getEvent(Event& e) {
             break;
         }
         case SDL_EVENT_WINDOW_RESIZED: {
+            float scale = SDL_GetWindowPixelDensity(SDL_GetWindowFromID(event.window.windowID));
             e.data = WindowResizeEvent{
                 getWindowEventWin(event),
                 event.window.data1,
-                event.window.data2
+                event.window.data2,
+                static_cast<int>(event.window.data1 * scale),
+                static_cast<int>(event.window.data2 * scale)
             };
             break;
         }

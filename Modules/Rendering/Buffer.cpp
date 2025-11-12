@@ -51,6 +51,10 @@ void Buffer::bind(const std::shared_ptr<DrawPass>& pass) const {
     SDL_BindGPUVertexBuffers(static_cast<SDL_GPURenderPass*>(pass->getInternal()), 0, &binding, 1);
 }
 
+void Buffer::unbind(const std::shared_ptr<DrawPass>& pass) const {
+    SDL_BindGPUVertexBuffers(static_cast<SDL_GPURenderPass*>(pass->getInternal()), 0, nullptr, 0);
+}
+
 Buffer::Type Buffer::type() {
     return usage;
 }

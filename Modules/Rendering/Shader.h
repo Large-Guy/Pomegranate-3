@@ -15,15 +15,17 @@ public:
     };
 
     void* getInternal() const;
-    Shader(const std::shared_ptr<Renderer>& renderer, Type type, const std::string& path, uint32_t samplers, uint32_t uniforms, uint32_t storages, uint32_t textures);
+
+    Shader(const std::shared_ptr<Renderer>& renderer, Type type, const std::string& path, uint32_t samplers,
+           uint32_t uniforms, uint32_t storages, uint32_t textures);
 
     ~Shader();
 
     Type type();
 
 protected:
-    void compile(const std::shared_ptr<Renderer>& renderer, const std::string& path, Type stage, uint32_t samplers, uint32_t uniforms, uint32_t storages, uint32_t textures);
-    
+    void compile();
+
     std::shared_ptr<Renderer> renderer;
     struct SDL_GPUShader* shader = nullptr;
     std::string path;

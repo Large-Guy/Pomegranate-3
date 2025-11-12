@@ -16,6 +16,7 @@ struct WindowCloseEvent : WindowEvent {
 
 struct WindowResizeEvent : WindowEvent {
     int32_t width, height;
+    int32_t realWidth, realHeight;
 };
 
 struct WindowMoveEvent : WindowEvent {

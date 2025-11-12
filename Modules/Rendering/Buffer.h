@@ -20,6 +20,8 @@ public:
 
     void bind(const std::shared_ptr<DrawPass>& pass) const;
 
+    void unbind(const std::shared_ptr<DrawPass>& pass) const;
+
     Type type();
 
 private:

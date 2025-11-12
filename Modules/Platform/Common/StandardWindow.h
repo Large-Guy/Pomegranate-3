@@ -27,6 +27,8 @@ public:
 
     void getSize(int& w, int& h) override;
 
+    void getRealSize(int& w, int& h) override;
+
     void setPosition(int x, int y) override;
 
     void getPosition(int& x, int& y) override;

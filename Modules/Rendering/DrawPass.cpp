@@ -50,7 +50,7 @@ void DrawPass::begin(const std::weak_ptr<CommandQueue>& commandQueue) {
     colorTargetInfo.store_op = SDL_GPU_STOREOP_STORE;
 
     this->renderPass = SDL_BeginGPURenderPass(static_cast<SDL_GPUCommandBuffer*>(commandBuffer->getInternal()),
-        &colorTargetInfo, 1, nullptr);
+                                              &colorTargetInfo, 1, nullptr);
 
     if (elements[ElementViewport]) {
         SDL_GPUViewport viewport = {};
@@ -70,4 +70,9 @@ void DrawPass::end() {
         return;
     SDL_EndGPURenderPass(static_cast<SDL_GPURenderPass*>(renderPass));
     renderPass = nullptr;
+}
+
+void DrawPass::drawPrimitives(int verticesCount, int vertexStart, int instancesCount, int instanceStart) const {
+    SDL_DrawGPUPrimitives(static_cast<SDL_GPURenderPass*>(renderPass), verticesCount, instancesCount, vertexStart,
+                          instanceStart);
 }

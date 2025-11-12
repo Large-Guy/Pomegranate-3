@@ -33,6 +33,10 @@ void Pipeline::primitive(const PrimitiveType type) {
     this->primitiveType = type;
 }
 
+void Pipeline::fill(FillMode fillMode) {
+    this->rasterizer = fillMode;
+}
+
 
 void Pipeline::build() {
     SDL_GPUTextureFormat form;
