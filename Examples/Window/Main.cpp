@@ -4,6 +4,8 @@
 #include "Events/Event.h"
 #include "Framework/App.h"
 #include "Layout/Container.h"
+#include "Layout/Horizontal.h"
+#include "Layout/Vertical.h"
 #include "Rendering/Buffer.h"
 #include "Rendering/CopyPass.h"
 #include "Rendering/Renderer.h"
@@ -132,62 +134,42 @@ public:
         copyPass->end();
         renderer->end();
 
-        container = std::make_shared<Container>(Container{
-            Container::Type::Vertical,
-            {Container::Position::Label::Physical, 0.f},
-            {Container::Position::Label::Physical, 0.f},
-            {Container::Scale::Label::Physical, 1.0f},
-            {Container::Scale::Label::Physical, 1.0f}
-        });
+        container = std::make_shared<Vertical>();
+        container->x = {Container::Position::Label::Physical, 0.f};
+        container->y = {Container::Position::Label::Physical, 0.f};
+        container->width = {Container::Scale::Label::Physical, 1.0f};
+        container->height = {Container::Scale::Label::Physical, 1.0f};
 
-        container->appendChild(std::make_shared<Container>(Container{
-            Container::Type::Horizontal,
-            {Container::Position::Label::Auto, 0.f},
-            {Container::Position::Label::Auto, 0.f},
-            {Container::Scale::Label::Auto, 0.0f},
-            {Container::Scale::Label::Auto, 0.0f}
-        }));
+
+        container->appendChild(std::make_shared<Horizontal>());
 
         //Menu bar
-        container->appendChild(std::make_shared<Container>(Container{
-            Container::Type::Horizontal,
-            {Container::Position::Label::Auto, 0.f},
-            {Container::Position::Label::Auto, 0.f},
-            {Container::Scale::Label::Auto, 0.0f},
-            {Container::Scale::Label::Pixel, 30.0f}
-        }));
+        container->appendChild(std::make_shared<Horizontal>());
+        container->getChild(1)->height = {Container::Scale::Label::Pixel, 30.0f};
 
         auto body = container->getChild(0);
 
-        body->appendChild(std::make_shared<Container>(Container{
-            Container::Type::Vertical,
-            {Container::Position::Label::Pixel, 0},
-            {Container::Position::Label::Pixel, 0},
-            {Container::Scale::Label::Pixel, 256.0f},
-            {Container::Scale::Label::Percent, 1.0f}
-        }));
+        body->appendChild(std::make_shared<Vertical>());
 
-        body->appendChild(std::make_shared<Container>(Container{
-            Container::Type::Float,
-            {Container::Position::Label::Pixel, 0},
-            {Container::Position::Label::Pixel, 0},
-            {Container::Scale::Label::Auto, 0.0f},
-            {Container::Scale::Label::Auto, 0.0f}
-        }));
+        body->getChild(0)->width = {Container::Scale::Label::Pixel, 256.0f};
+        body->getChild(0)->height = {Container::Scale::Label::Percent, 1.0f};
 
-        auto sidebar = body->getChild(0);
+        body->appendChild(std::make_shared<Container>());
+
+        auto sidebar = body->getChild<Vertical>(0);
         sidebar->padding = {Container::Scale::Label::Pixel, 8.0f};
         sidebar->gap = {Container::Scale::Label::Pixel, 8.0f};
-        sidebar->alignment = Container::Alignment::Trailing;
+        sidebar->yAlignment = Flexable::Alignment::Trailing;
 
         for (int i = 0; i < 8; i++) {
-            sidebar->appendChild(std::make_shared<Container>(Container{
-                Container::Type::Float,
-                {Container::Position::Label::Pixel, 16},
-                {Container::Position::Label::Pixel, 16},
-                {Container::Scale::Label::Auto, 0.0f},
-                {Container::Scale::Label::Pixel, 32.0f}
-            }));
+            auto bar = std::make_shared<Container>();
+
+            bar->x = {Container::Position::Label::Pixel, 16};
+            bar->y = {Container::Position::Label::Pixel, 16};
+            bar->width = {Container::Scale::Label::Auto, 0.0f};
+            bar->height = {Container::Scale::Label::Pixel, 32.0f};
+
+            sidebar->appendChild(bar);
         }
     }
 
@@ -215,8 +197,8 @@ public:
                        const std::shared_ptr<Container>& con) {
         auto [x, y, width, height] = con->real();
         drawRectangle(cmd, pass, x, y, width, height);
-        for (int i = 0; i < con->getChildCount(); i++) {
-            drawContainer(cmd, pass, con->getChild(i));
+        for (auto& child: *con) {
+            drawContainer(cmd, pass, child);
         }
     }
 

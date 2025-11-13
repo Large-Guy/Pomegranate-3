@@ -6,18 +6,10 @@
 
 class Container : public std::enable_shared_from_this<Container> {
 public:
-    enum class Type {
-        Float, //Children can be position freely in the container
-        Full, //Children will fill the container
-        Vertical, //Children will be slotted vertically
-        Horizontal, //Children will be slotted horizontally
-    };
+    virtual ~Container() = default;
 
-    enum class Alignment {
-        Leading,
-        Center,
-        Trailing
-    };
+    using iterator = std::vector<std::shared_ptr<Container> >::iterator;
+    using const_iterator = std::vector<std::shared_ptr<Container> >::const_iterator;
 
     struct Output {
         float x;
@@ -25,7 +17,7 @@ public:
         float width;
         float height;
 
-        bool contains(float x, float y);
+        bool contains(float x, float y) const;
     };
 
     struct Scale {
@@ -47,10 +39,7 @@ public:
 
         Scale& operator=(Label label);
 
-    private:
         [[nodiscard]] float real(float relative, float autoSize, float scale = 1.0f) const;
-
-        friend class Container;
     };
 
     struct Position {
@@ -72,30 +61,18 @@ public:
 
         Position& operator=(Label label);
 
-    private:
         [[nodiscard]] float real(float start, float relative, float scale = 1.0f) const;
-
-        friend class Container;
     };
 
-    Type type;
+    Position x = {Position::Label::Auto, 0.0f};
+    Position y = {Position::Label::Auto, 0.0f};
+    Scale width = {Scale::Label::Auto, 1.0f};
+    Scale height = {Scale::Label::Auto, 1.0f};
 
-    Position x;
-    Position y;
-    Scale width;
-    Scale height;
+    Scale padding = {Scale::Label::Auto, 0.0f};
+    Scale gap = {Scale::Label::Auto, 0.0f};
 
-    Scale padding;
-    Scale gap;
-
-    bool overflowX;
-    bool overflowY;
-    bool fillX;
-    bool fillY;
-
-    Alignment alignment;
-
-    Container(Type type, Position x, Position y, Scale width, Scale height);
+    Output rect{};
 
     void appendChild(const std::shared_ptr<Container>& container);
 
@@ -109,23 +86,32 @@ public:
 
     std::shared_ptr<Container> getChild(size_t index) const;
 
+    template<typename T>
+    std::shared_ptr<T> getChild(size_t index) const {
+        return std::dynamic_pointer_cast<T>(getChild(index));
+    }
+
+    virtual void compute();
+
     void computeChildren();
 
     [[nodiscard]] Output real() const;
 
+    iterator begin();
+
+    iterator end();
+
+    const_iterator begin() const;
+
+    const_iterator end() const;
+
+    const_iterator cbegin() const;
+
+    const_iterator cend() const;
+
 private:
-    void computeFloat();
-
-    void computeFull();
-
-    void computeVertical();
-
-    void computeHorizontal();
-
     std::shared_ptr<Container> parent;
     std::vector<std::shared_ptr<Container> > children;
-
-    Output rect{};
 };
 
 
