@@ -13,6 +13,12 @@ public:
         Horizontal, //Children will be slotted horizontally
     };
 
+    enum class Alignment {
+        Leading,
+        Center,
+        Trailing
+    };
+
     struct Output {
         float x;
         float y;
@@ -86,6 +92,8 @@ public:
     bool overflowY;
     bool fillX;
     bool fillY;
+
+    Alignment alignment;
 
     Container(Type type, Position x, Position y, Scale width, Scale height);
 

@@ -85,6 +85,9 @@ Container::Container(Type type, Position x, Position y, Scale width, Scale heigh
     this->gap = {Scale::Label::Auto, 0};
     this->overflowX = false;
     this->overflowY = false;
+    this->fillX = false;
+    this->fillY = false;
+    this->alignment = Alignment::Leading;
     this->rect = {};
 }
 
@@ -204,6 +207,22 @@ void Container::computeVertical() {
 
     remainingPhysical -= paddedHeight * (totalPercent * percentScale);
 
+    float alignmentOffset;
+
+    switch (alignment) {
+        case Alignment::Leading:
+            alignmentOffset = 0.0f;
+            break;
+        case Alignment::Center:
+            alignmentOffset = remainingPhysical / 2.0f;
+            break;
+        case Alignment::Trailing:
+            alignmentOffset = remainingPhysical;
+            break;
+        default:
+            throw std::runtime_error("Invalid alignment");
+    }
+
     float autoSize = remainingPhysical / static_cast<float>(autoCount);
 
     float consumed = 0.0f;
@@ -212,7 +231,7 @@ void Container::computeVertical() {
         child->rect.x = rect.x + xPadding;
         child->rect.width = rect.width - xPadding * 2.0f;
 
-        child->rect.y = rect.y + yPadding + consumed;
+        child->rect.y = rect.y + yPadding + consumed + alignmentOffset;
         child->rect.height = child->height.real(paddedHeight, autoSize);
 
         consumed += child->rect.height;
@@ -259,13 +278,29 @@ void Container::computeHorizontal() {
 
     float autoSize = remainingPhysical / static_cast<float>(autoCount);
 
+    float alignmentOffset;
+
+    switch (alignment) {
+        case Alignment::Leading:
+            alignmentOffset = 0.0f;
+            break;
+        case Alignment::Center:
+            alignmentOffset = remainingPhysical / 2.0f;
+            break;
+        case Alignment::Trailing:
+            alignmentOffset = remainingPhysical;
+            break;
+        default:
+            throw std::runtime_error("Invalid alignment");
+    }
+
     float consumed = 0.0f;
 
     for (auto& child: children) {
         child->rect.y = rect.y + yPadding;
         child->rect.height = rect.height - yPadding * 2.0f;
 
-        child->rect.x = rect.x + xPadding + consumed;
+        child->rect.x = rect.x + xPadding + consumed + alignmentOffset;
         child->rect.width = child->width.real(paddedWidth, autoSize);
 
         consumed += child->rect.width;

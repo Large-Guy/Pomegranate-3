@@ -133,7 +133,7 @@ public:
         renderer->end();
 
         container = std::make_shared<Container>(Container{
-            Container::Type::Horizontal,
+            Container::Type::Vertical,
             {Container::Position::Label::Physical, 0.f},
             {Container::Position::Label::Physical, 0.f},
             {Container::Scale::Label::Physical, 1.0f},
@@ -141,6 +141,25 @@ public:
         });
 
         container->appendChild(std::make_shared<Container>(Container{
+            Container::Type::Horizontal,
+            {Container::Position::Label::Auto, 0.f},
+            {Container::Position::Label::Auto, 0.f},
+            {Container::Scale::Label::Auto, 0.0f},
+            {Container::Scale::Label::Auto, 0.0f}
+        }));
+
+        //Menu bar
+        container->appendChild(std::make_shared<Container>(Container{
+            Container::Type::Horizontal,
+            {Container::Position::Label::Auto, 0.f},
+            {Container::Position::Label::Auto, 0.f},
+            {Container::Scale::Label::Auto, 0.0f},
+            {Container::Scale::Label::Pixel, 30.0f}
+        }));
+
+        auto body = container->getChild(0);
+
+        body->appendChild(std::make_shared<Container>(Container{
             Container::Type::Vertical,
             {Container::Position::Label::Pixel, 0},
             {Container::Position::Label::Pixel, 0},
@@ -148,7 +167,7 @@ public:
             {Container::Scale::Label::Percent, 1.0f}
         }));
 
-        container->appendChild(std::make_shared<Container>(Container{
+        body->appendChild(std::make_shared<Container>(Container{
             Container::Type::Float,
             {Container::Position::Label::Pixel, 0},
             {Container::Position::Label::Pixel, 0},
@@ -156,17 +175,18 @@ public:
             {Container::Scale::Label::Auto, 0.0f}
         }));
 
-        auto sidebar = container->getChild(0);
+        auto sidebar = body->getChild(0);
         sidebar->padding = {Container::Scale::Label::Pixel, 8.0f};
         sidebar->gap = {Container::Scale::Label::Pixel, 8.0f};
+        sidebar->alignment = Container::Alignment::Trailing;
 
-        for (int i = 0; i < 16; i++) {
+        for (int i = 0; i < 8; i++) {
             sidebar->appendChild(std::make_shared<Container>(Container{
                 Container::Type::Float,
                 {Container::Position::Label::Pixel, 16},
                 {Container::Position::Label::Pixel, 16},
                 {Container::Scale::Label::Auto, 0.0f},
-                {Container::Scale::Label::Auto, 0.0f}
+                {Container::Scale::Label::Pixel, 32.0f}
             }));
         }
     }
