@@ -74,10 +74,21 @@ float sdfRoundedBox(in float2 p, in float2 b, in float4 r)
     return min(max(q.x, q.y), 0.0f) + length(max(q, 0.0f)) - r.x;
 }
 
+bool edging(Output input, float rounding, float size)
+{
+    bool q = sdfRoundedBox(input.pixelUV, flayout.rect.zw, rounding) < 0.0f;
+    bool q1 = sdfRoundedBox(input.pixelUV + float2(size, 0.0), flayout.rect.zw, rounding) < 0.0f;
+    bool q2 = sdfRoundedBox(input.pixelUV + float2(-size, 0.0), flayout.rect.zw, rounding) < 0.0f;
+    bool q3 = sdfRoundedBox(input.pixelUV + float2(0.0, size), flayout.rect.zw, rounding) < 0.0f;
+    bool q4 = sdfRoundedBox(input.pixelUV + float2(0.0, -size), flayout.rect.zw, rounding) < 0.0f;
+
+    return q != q1 || q != q2 || q != q3 || q != q4;
+}
+
 float4 _fragment(Output input) : SV_TARGET
 {
     float4 color = float4(input.uv.xy, 0.0f, 1.0f);
-    float rounding = 32.0f;
+    float rounding = 24.0f;
     float minBreadth = min(flayout.rect.z, flayout.rect.w);
     rounding = min(rounding, minBreadth);
     float sdfQuery = sdfRoundedBox(input.pixelUV, flayout.rect.zw, rounding);
@@ -85,7 +96,11 @@ float4 _fragment(Output input) : SV_TARGET
     float3 randColor = normalize(float3(rand(flayout.rect.xy), rand(flayout.rect.xy + float2(1.0f,0.0f)), rand(flayout.rect.xy + float2(0.0f, 1.0f))));
     if(sdfQuery < 0.0f)
     {
-        color.xyz = randColor;
+        bool edge = edging(input, rounding, 1.0f);
+        if(edge)
+            color.xyz = float3(0.25f, 0.25f, 0.25f);
+        else
+            color.xyz = float3(0.15f, 0.15f, 0.15f);
     }
     else
     {

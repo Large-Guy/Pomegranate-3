@@ -55,9 +55,9 @@ void DrawPass::begin(const std::weak_ptr<CommandQueue>& commandQueue) {
     if (elements[ElementViewport]) {
         SDL_GPUViewport viewport = {};
         viewport.x = this->vp.x;
-        viewport.y = this->vp.y;
+        viewport.y = this->vp.y + this->vp.h;
         viewport.w = this->vp.w;
-        viewport.h = this->vp.h;
+        viewport.h = -this->vp.h;
         viewport.min_depth = this->vp.near;
         viewport.max_depth = this->vp.far;
 

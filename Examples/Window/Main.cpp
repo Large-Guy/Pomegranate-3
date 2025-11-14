@@ -48,7 +48,7 @@ public:
         window->setFlag(Window::Transparent, true);
         window->setFlag(Window::Blur, true);
         window->setFlag(Window::HighDPI, true);
-        window->setFlag(Window::Full, true);
+        //window->setFlag(Window::Full, true);
 
         renderer = std::make_shared<Renderer>();
 
@@ -140,26 +140,39 @@ public:
         container->width = {Container::Scale::Label::Physical, 1.0f};
         container->height = {Container::Scale::Label::Physical, 1.0f};
 
-
-        container->appendChild(std::make_shared<Horizontal>());
-
         //Menu bar
         container->appendChild(std::make_shared<Horizontal>());
-        container->getChild(1)->height = {Container::Scale::Label::Pixel, 30.0f};
+        container->getChild(0)->height = {Container::Scale::Label::Pixel, 30.0f};
 
-        auto body = container->getChild(0);
+        container->appendChild(std::make_shared<Horizontal>());
 
-        body->appendChild(std::make_shared<Vertical>());
+
+        auto body = container->getChild(1);
+
+        //Sidebar
+        body->appendChild(std::make_shared<Horizontal>());
 
         body->getChild(0)->width = {Container::Scale::Label::Pixel, 256.0f};
         body->getChild(0)->height = {Container::Scale::Label::Percent, 1.0f};
 
         body->appendChild(std::make_shared<Container>());
 
-        auto sidebar = body->getChild<Vertical>(0);
-        sidebar->padding = {Container::Scale::Label::Pixel, 8.0f};
-        sidebar->gap = {Container::Scale::Label::Pixel, 8.0f};
-        sidebar->yAlignment = Flexable::Alignment::Trailing;
+        auto sidebar = body->getChild<Horizontal>(0);
+
+        auto scrollbar = std::make_shared<Container>();
+        scrollbar->width = {Container::Scale::Label::Pixel, 12.0f};
+
+        auto handle = std::make_shared<Container>();
+        handle->height = {Container::Scale::Label::Pixel, 64.0f};
+        scrollbar->appendChild(handle);
+
+        sidebar->appendChild(scrollbar);
+
+        auto contents = std::make_shared<Vertical>();
+        contents->padding = {Container::Scale::Label::Pixel, 8.0f};
+        contents->gap = {Container::Scale::Label::Pixel, 8.0f};
+        contents->yAlignment = Flexable::Alignment::Leading;
+        sidebar->appendChild(contents);
 
         for (int i = 0; i < 8; i++) {
             auto bar = std::make_shared<Container>();
@@ -169,7 +182,7 @@ public:
             bar->width = {Container::Scale::Label::Auto, 0.0f};
             bar->height = {Container::Scale::Label::Pixel, 32.0f};
 
-            sidebar->appendChild(bar);
+            contents->appendChild(bar);
         }
     }
 
