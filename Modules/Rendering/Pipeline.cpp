@@ -185,7 +185,22 @@ void Pipeline::build() {
 
 void Pipeline::bind(const std::weak_ptr<CommandQueue>& commandQueue, const std::shared_ptr<DrawPass>& pass) {
     this->queue = commandQueue;
+    this->pass = pass;
     SDL_BindGPUGraphicsPipeline(static_cast<SDL_GPURenderPass*>(pass->getInternal()), pipeline);
+
+    std::vector<SDL_GPUTextureSamplerBinding> bindings = {};
+    bindings.reserve(samplers.size());
+    for (int i = 0; i < samplers.size(); i++) {
+        bindings.push_back({
+            .texture = static_cast<SDL_GPUTexture*>(textures[i]->getInternal()),
+            .sampler = static_cast<SDL_GPUSampler*>(samplers[i]->getInternal())
+        });
+    }
+
+    SDL_BindGPUVertexSamplers(static_cast<SDL_GPURenderPass*>(pass->getInternal()), 0, bindings.data(),
+                              bindings.size());
+    SDL_BindGPUFragmentSamplers(static_cast<SDL_GPURenderPass*>(pass->getInternal()), 0, bindings.data(),
+                                bindings.size());
 }
 
 void Pipeline::uniformPtr(Shader::Type type, int index, void* info, size_t size) const {
@@ -206,5 +221,16 @@ void Pipeline::uniformPtr(Shader::Type type, int index, void* info, size_t size)
         default:
             throw std::runtime_error("Invalid shader type");
     }
+}
+
+void Pipeline::texture(int index, const std::shared_ptr<Texture>& texture,
+                       const std::shared_ptr<Sampler>& sampler) {
+    if (samplers.size() <= index) {
+        samplers.resize(index + 1);
+        textures.resize(index + 1);
+    }
+
+    samplers[index] = sampler;
+    textures[index] = texture;
 }
 

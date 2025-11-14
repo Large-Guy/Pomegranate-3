@@ -107,7 +107,7 @@ float4 _fragment(Output input) : SV_TARGET
         bool edge = edging(input, rounding, 1.0f);
         if(edge)
         {
-            color.xyz = float3(0.2f, 0.2f, 0.2f);
+            color.xyz = float3(0.2f,0.2f,0.2f);
         }
         else
         {

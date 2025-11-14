@@ -12,7 +12,13 @@ public:
 
     void viewport(Viewport viewport);
 
-    void texture(std::shared_ptr<Texture> texture);
+    void texture(std::shared_ptr<Texture> texture, int layer = 0);
+
+    void disableClear();
+
+    void disableViewport();
+
+    void disableTexture();
 
     void begin(const std::weak_ptr<CommandQueue>& commandQueue) override;
 
@@ -32,6 +38,7 @@ private:
     Color clearColor;
     Viewport vp{};
     std::shared_ptr<Texture> outputTexture;
+    int layer = 0;
     BitFlag<Elements> elements;
 };
 

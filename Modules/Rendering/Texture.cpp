@@ -5,9 +5,12 @@
 
 #include "SDL3/SDL_gpu.h"
 
-Texture::Texture(const std::shared_ptr<Renderer>& renderer, Format format, int width, int height, BitFlag<Flags> flags) {
+Texture::Texture(const std::shared_ptr<Renderer>& renderer, Format format, int width, int height, int layers,
+                 BitFlag<Flags> flags) {
     SDL_GPUTextureCreateInfo info{};
     info.type = SDL_GPU_TEXTURETYPE_2D;
+    if (layers > 1)
+        info.type = SDL_GPU_TEXTURETYPE_2D_ARRAY;
     info.format = SDL_GPU_TEXTUREFORMAT_R8G8B8A8_UNORM;
     SDL_GPUTextureUsageFlags usageFlags = SDL_GPU_TEXTUREUSAGE_SAMPLER;
     if (flags[RenderTarget])
@@ -15,7 +18,7 @@ Texture::Texture(const std::shared_ptr<Renderer>& renderer, Format format, int w
     info.usage = usageFlags;
     info.width = width;
     info.height = height;
-    info.layer_count_or_depth = 1;
+    info.layer_count_or_depth = layers;
     info.num_levels = 1;
     info.sample_count = SDL_GPU_SAMPLECOUNT_1;
 

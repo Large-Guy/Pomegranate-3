@@ -26,18 +26,26 @@ struct alignas(16) PanelUniform {
     float rectX, rectY, rectW, rectH;
 };
 
+#define UI_LAYERS 2
 
 class WindowExample : public App {
 public:
     std::shared_ptr<Window> window;
     std::shared_ptr<Renderer> renderer;
-    std::shared_ptr<Texture> target;
     std::shared_ptr<Display> display;
-    std::shared_ptr<Pipeline> pipeline;
     std::shared_ptr<Buffer> buffer;
+
+    std::shared_ptr<Texture> target;
+    std::shared_ptr<Texture> layers[UI_LAYERS];
+
+    std::shared_ptr<Sampler> sampler;
 
     std::shared_ptr<Container> container;
     std::shared_ptr<Vertical> sidebarContents;
+
+    std::shared_ptr<Pipeline> panelPipeline;
+    std::shared_ptr<Pipeline> glassPipeline;
+    std::shared_ptr<Pipeline> compositorPipeline;
 
     float time = 0.0;
 
@@ -57,42 +65,55 @@ public:
 
         int width, height;
         window->getRealSize(width, height);
-        target = std::make_shared<Texture>(renderer, Texture::Format::R8G8B8A8_SRGB, width, height,
+
+        sampler = std::make_shared<Sampler>(renderer, Sampler::Filter::Nearest, Sampler::Wrap::Clamp);
+
+        target = std::make_shared<Texture>(renderer, Texture::Format::R8G8B8A8_SRGB, width, height, 1,
                                            BitFlag<Texture::Flags>({Texture::Flags::RenderTarget}));
+        for (auto& layer: layers)
+            layer = std::make_shared<Texture>(renderer, Texture::Format::R8G8B8A8_SRGB, width, height, 1,
+                                              BitFlag<Texture::Flags>({Texture::Flags::RenderTarget}));
 
 
         window->setBlurRadius(5);
 
         display = std::make_shared<Display>(renderer, window);
 
-        std::shared_ptr<Shader> vertex = std::make_shared<Shader>(renderer, Shader::Type::Vertex,
-                                                                  "Resources/Panel.hlsl", 0, 1, 0, 0);
-        std::shared_ptr<Shader> fragment = std::make_shared<Shader>(renderer, Shader::Type::Fragment,
-                                                                    "Resources/Panel.hlsl", 0, 1, 0, 0);
+        std::shared_ptr<Shader> panelVertexShader = std::make_shared<Shader>(renderer, Shader::Type::Vertex,
+                                                                             "Resources/Panel.hlsl", 0, 1, 0, 0);
+        std::shared_ptr<Shader> panelFragmentShader = std::make_shared<Shader>(renderer, Shader::Type::Fragment,
+                                                                               "Resources/Panel.hlsl", 0, 1, 0, 0);
 
-        pipeline = std::make_shared<Pipeline>(renderer, Texture::Format::R8G8B8A8_SRGB);
-        pipeline->vertex(vertex, {
-                             .slot = 0,
-                             .size = sizeof(Vertex),
-                             .attributes = {
-                                 {
-                                     .bufferSlot = 0,
-                                     .type = VertexDescription::Attribute::Type::float3,
-                                     .location = 0,
-                                     .offset = 0
-                                 },
-                                 {
-                                     .bufferSlot = 0,
-                                     .type = VertexDescription::Attribute::Type::float4,
-                                     .location = 1,
-                                     .offset = offsetof(Vertex, r)
-                                 }
-                             }
-                         });
-        pipeline->fragment(fragment);
-        pipeline->primitive(Pipeline::PrimitiveType::TriangleList);
-        pipeline->fill(Pipeline::FillMode::Fill);
-        pipeline->build();
+        panelPipeline = std::make_shared<Pipeline>(renderer, Texture::Format::R8G8B8A8_SRGB);
+        panelPipeline->vertex(panelVertexShader, {});
+        panelPipeline->fragment(panelFragmentShader);
+        panelPipeline->primitive(Pipeline::PrimitiveType::TriangleList);
+        panelPipeline->fill(Pipeline::FillMode::Fill);
+        panelPipeline->build();
+
+        std::shared_ptr<Shader> glassVertexShader = std::make_shared<Shader>(
+            renderer, Shader::Type::Vertex, "Resources/Glass.hlsl", 0, 1, 0, 0);
+        std::shared_ptr<Shader> glassFragmentShader = std::make_shared<Shader>(
+            renderer, Shader::Type::Fragment, "Resources/Glass.hlsl", 1, 1, 0, 0);
+
+        glassPipeline = std::make_shared<Pipeline>(renderer, Texture::Format::R8G8B8A8_SRGB);
+        glassPipeline->vertex(glassVertexShader, {});
+        glassPipeline->fragment(glassFragmentShader);
+        glassPipeline->primitive(Pipeline::PrimitiveType::TriangleList);
+        glassPipeline->fill(Pipeline::FillMode::Fill);
+        glassPipeline->build();
+
+        std::shared_ptr<Shader> compositorVertexShader = std::make_shared<Shader>(
+            renderer, Shader::Type::Vertex, "Resources/Compositor.hlsl", 0, 0, 0, 0);
+        std::shared_ptr<Shader> compositorFragmentShader = std::make_shared<Shader>(
+            renderer, Shader::Type::Fragment, "Resources/Compositor.hlsl", 2, 0, 0, 0);
+
+        compositorPipeline = std::make_shared<Pipeline>(renderer, Texture::Format::R8G8B8A8_SRGB);
+        compositorPipeline->vertex(compositorVertexShader, {});
+        compositorPipeline->fragment(compositorFragmentShader);
+        compositorPipeline->primitive(Pipeline::PrimitiveType::TriangleList);
+        compositorPipeline->fill(Pipeline::FillMode::Fill);
+        compositorPipeline->build();
 
         buffer = std::make_shared<Buffer>(renderer, Buffer::Type::Vertex, sizeof(Vertex) * 3);
 
@@ -192,7 +213,6 @@ public:
 
     void drawRectangle(const std::weak_ptr<CommandQueue>& cmd, const std::shared_ptr<DrawPass>& pass, float x, float y,
                        float w, float h) const {
-        pipeline->bind(cmd, pass);
         int width, height;
         window->getSize(width, height);
         PanelUniform panelUniform{
@@ -205,14 +225,15 @@ public:
             .rectW = w,
             .rectH = h
         };
-        pipeline->uniform(Shader::Type::Vertex, 0, panelUniform);
-        pipeline->uniform(Shader::Type::Fragment, 0, panelUniform);
+        panelPipeline->uniform(Shader::Type::Vertex, 0, panelUniform);
+        panelPipeline->uniform(Shader::Type::Fragment, 0, panelUniform);
         pass->drawPrimitives(6, 0, 1, 0);
     }
 
     void drawContainer(const std::weak_ptr<CommandQueue>& cmd, const std::shared_ptr<DrawPass>& pass,
                        const std::shared_ptr<Container>& con) {
         auto [x, y, width, height] = con->real();
+        panelPipeline->bind(cmd, pass);
         drawRectangle(cmd, pass, x, y, width, height);
         for (auto& child: *con) {
             pass->scissor(x * 2.0f + 1.0f, y * 2.0f + 1.0f, width * 2.0f - 2.0f, height * 2.0f - 2.0f);
@@ -230,8 +251,12 @@ public:
             }
             if (auto* resize = event.as<WindowResizeEvent>()) {
                 target = std::make_shared<Texture>(renderer, Texture::Format::R8G8B8A8_SRGB, resize->realWidth,
-                                                   resize->realHeight,
+                                                   resize->realHeight, 1,
                                                    BitFlag<Texture::Flags>({Texture::Flags::RenderTarget}));
+                for (auto& layer: layers)
+                    layer = std::make_shared<Texture>(renderer, Texture::Format::R8G8B8A8_SRGB, resize->realWidth,
+                                                      resize->realHeight, 1,
+                                                      BitFlag<Texture::Flags>({Texture::Flags::RenderTarget}));
             }
         }
 
@@ -248,17 +273,57 @@ public:
         auto cmdQueue = renderer->begin();
 
         auto draw = std::make_shared<DrawPass>(renderer);
-        draw->texture(target);
-        draw->clear({0.0f, 0.0f, 0.0f, 0.33f});
+
+        //Panels
+
+        draw->texture(layers[0], 0);
+
+        draw->clear({0.0f, 0.0f, 0.0f, 0.0f});
+
         draw->viewport({
             .x = 0.0f,
             .y = 0.0f,
             .w = static_cast<float>(target->width()),
             .h = static_cast<float>(target->height())
         });
+
         draw->begin(cmdQueue);
 
         drawContainer(cmdQueue, draw, container);
+
+        draw->end();
+
+        //Glass layer
+
+        draw->clear({0.0f, 0.0f, 0.0f, 0.0f});
+
+        draw->texture(layers[1], 0);
+
+        draw->begin(cmdQueue);
+
+        glassPipeline->texture(0, layers[0], sampler);
+        glassPipeline->bind(cmdQueue, draw);
+
+        float padding = 64.0f;
+
+        drawRectangle(cmdQueue, draw, padding, padding, static_cast<float>(width) - padding * 2.0f,
+                      static_cast<float>(height) - padding * 2.0f);
+
+        draw->end();
+
+        //Compositor
+
+        draw->clear({0.0f, 0.0f, 0.0f, 0.33f});
+
+        draw->texture(target, 0);
+
+        draw->begin(cmdQueue);
+
+        compositorPipeline->texture(0, layers[0], sampler);
+        compositorPipeline->texture(1, layers[1], sampler);
+        compositorPipeline->bind(cmdQueue, draw);
+
+        draw->drawPrimitives(6, 0, 1, 0);
 
         draw->end();
 

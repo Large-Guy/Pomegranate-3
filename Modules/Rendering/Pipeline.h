@@ -3,6 +3,7 @@
 #include <memory>
 
 #include "DrawPass.h"
+#include "Sampler.h"
 #include "Shader.h"
 #include "Texture.h"
 #include "Vertex.h"
@@ -52,6 +53,8 @@ public:
         uniformPtr(type, index, static_cast<void*>(&info), sizeof(T));
     }
 
+    void texture(int index, const std::shared_ptr<Texture>& texture, const std::shared_ptr<Sampler>& sampler);
+
 private:
     std::shared_ptr<Renderer> renderer;
     std::shared_ptr<Shader> vertexShader;
@@ -63,6 +66,9 @@ private:
     PrimitiveType primitiveType;
     struct SDL_GPUGraphicsPipeline* pipeline;
     std::weak_ptr<CommandQueue> queue;
+    std::weak_ptr<DrawPass> pass;
+    std::vector<std::shared_ptr<Texture> > textures;
+    std::vector<std::shared_ptr<Sampler> > samplers;
 };
 
 

@@ -27,9 +27,22 @@ void DrawPass::viewport(Viewport viewport) {
     this->vp = viewport;
 }
 
-void DrawPass::texture(std::shared_ptr<Texture> texture) {
+void DrawPass::texture(std::shared_ptr<Texture> texture, int layer) {
     this->elements.set(ElementTexture, true);
     this->outputTexture = std::move(texture);
+    this->layer = layer;
+}
+
+void DrawPass::disableClear() {
+    this->elements.set(ElementClear, false);
+}
+
+void DrawPass::disableViewport() {
+    this->elements.set(ElementViewport, false);
+}
+
+void DrawPass::disableTexture() {
+    this->elements.set(ElementTexture, false);
 }
 
 
@@ -43,6 +56,7 @@ void DrawPass::begin(const std::weak_ptr<CommandQueue>& commandQueue) {
 
     if (elements[ElementTexture]) {
         colorTargetInfo.texture = static_cast<SDL_GPUTexture*>(this->outputTexture->getInternal());
+        colorTargetInfo.layer_or_depth_plane = layer;
     }
     if (elements[ElementClear]) {
         colorTargetInfo.clear_color = SDL_FColor{clearColor.r, clearColor.g, clearColor.b, clearColor.a};

@@ -27,6 +27,8 @@ set(RenderingSrc
         Buffer.h
         Vertex.cpp
         Vertex.h
+        Sampler.cpp
+        Sampler.h
 )
 
 add_library(Rendering STATIC
