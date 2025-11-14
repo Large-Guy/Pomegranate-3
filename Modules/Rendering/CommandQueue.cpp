@@ -8,9 +8,7 @@ CommandQueue::CommandQueue(const std::shared_ptr<Renderer>& device) {
     this->commandBuffer = SDL_AcquireGPUCommandBuffer(static_cast<SDL_GPUDevice*>(device->getInternal()));
 }
 
-CommandQueue::~CommandQueue() {
-    
-}
+CommandQueue::~CommandQueue() = default;
 
 void* CommandQueue::getInternal() {
     return commandBuffer;

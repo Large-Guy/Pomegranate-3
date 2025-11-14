@@ -37,10 +37,13 @@ public:
     std::shared_ptr<Buffer> buffer;
 
     std::shared_ptr<Container> container;
+    std::shared_ptr<Vertical> sidebarContents;
+
+    float time = 0.0;
 
     void start() override {
         window = Window::create();
-        window->setSize(800, 600);
+        window->setSize(1024, 720);
         window->setTitle("Window Example");
         window->open();
 
@@ -168,13 +171,14 @@ public:
 
         sidebar->appendChild(scrollbar);
 
-        auto contents = std::make_shared<Vertical>();
-        contents->padding = {Container::Scale::Label::Pixel, 8.0f};
-        contents->gap = {Container::Scale::Label::Pixel, 8.0f};
-        contents->yAlignment = Flexable::Alignment::Leading;
-        sidebar->appendChild(contents);
+        sidebarContents = std::make_shared<Vertical>();
+        sidebarContents->padding = {Container::Scale::Label::Pixel, 8.0f};
+        sidebarContents->gap = {Container::Scale::Label::Pixel, 8.0f};
+        sidebarContents->yAlignment = Flexable::Alignment::Leading;
+        sidebarContents->yOffset = Container::Position::Label::Pixel;
+        sidebar->appendChild(sidebarContents);
 
-        for (int i = 0; i < 8; i++) {
+        for (int i = 0; i < 16; i++) {
             auto bar = std::make_shared<Container>();
 
             bar->x = {Container::Position::Label::Pixel, 16};
@@ -182,7 +186,7 @@ public:
             bar->width = {Container::Scale::Label::Auto, 0.0f};
             bar->height = {Container::Scale::Label::Pixel, 32.0f};
 
-            contents->appendChild(bar);
+            sidebarContents->appendChild(bar);
         }
     }
 
@@ -211,11 +215,14 @@ public:
         auto [x, y, width, height] = con->real();
         drawRectangle(cmd, pass, x, y, width, height);
         for (auto& child: *con) {
+            pass->scissor(x * 2.0f + 1.0f, y * 2.0f + 1.0f, width * 2.0f - 2.0f, height * 2.0f - 2.0f);
             drawContainer(cmd, pass, child);
         }
     }
 
     void update(float delta) override {
+        time += delta;
+
         Event event;
         while (Event::getEvent(event)) {
             if (auto* close = event.as<WindowCloseEvent>()) {
@@ -233,6 +240,8 @@ public:
 
         container->width = static_cast<float>(width);
         container->height = static_cast<float>(height);
+
+        sidebarContents->yOffset = sinf(time * 0.1f) * 360;
 
         container->computeChildren();
 

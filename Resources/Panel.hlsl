@@ -85,6 +85,11 @@ bool edging(Output input, float rounding, float size)
     return q != q1 || q != q2 || q != q3 || q != q4;
 }
 
+float clamp01(float v)
+{
+    return clamp(v, 0.0f, 1.0f);
+}
+
 float4 _fragment(Output input) : SV_TARGET
 {
     float4 color = float4(input.uv.xy, 0.0f, 1.0f);
@@ -94,13 +99,20 @@ float4 _fragment(Output input) : SV_TARGET
     float sdfQuery = sdfRoundedBox(input.pixelUV, flayout.rect.zw, rounding);
     float r = rand(flayout.rect.xy);
     float3 randColor = normalize(float3(rand(flayout.rect.xy), rand(flayout.rect.xy + float2(1.0f,0.0f)), rand(flayout.rect.xy + float2(0.0f, 1.0f))));
+
     if(sdfQuery < 0.0f)
     {
+        float shadow = 8;
+
         bool edge = edging(input, rounding, 1.0f);
         if(edge)
-            color.xyz = float3(0.25f, 0.25f, 0.25f);
+        {
+            color.xyz = float3(0.2f, 0.2f, 0.2f);
+        }
         else
-            color.xyz = float3(0.15f, 0.15f, 0.15f);
+        {
+            color.xyz = lerp(float3(0.125f,0.125f,0.125f), float3(0.15f, 0.15f, 0.15f), clamp01((flayout.rect.w - input.pixelUV.y) / shadow));
+        }
     }
     else
     {

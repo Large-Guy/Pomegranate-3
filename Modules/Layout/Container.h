@@ -74,6 +74,9 @@ public:
 
     Output rect{};
 
+    Position xOffset = {Position::Label::Auto, 0.0f};
+    Position yOffset = {Position::Label::Auto, 0.0f};
+
     void appendChild(const std::shared_ptr<Container>& container);
 
     void insertChild(size_t index, const std::shared_ptr<Container>& container);

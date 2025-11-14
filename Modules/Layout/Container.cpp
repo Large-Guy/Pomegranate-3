@@ -124,6 +124,8 @@ void Container::computeChildren() {
     compute();
 
     for (auto& child: children) {
+        child->rect.x += this->xOffset.real(0.0f, rect.width);
+        child->rect.y += this->yOffset.real(0.0f, rect.height);
         child->computeChildren();
     }
 }

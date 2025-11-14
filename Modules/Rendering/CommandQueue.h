@@ -5,14 +5,15 @@
 
 class CommandQueue {
 public:
-    CommandQueue(const std::shared_ptr<class Renderer>& device);
+    explicit CommandQueue(const std::shared_ptr<class Renderer>& device);
+
     ~CommandQueue();
 
     void* getInternal();
+
 private:
     std::shared_ptr<class Renderer> device;
     struct SDL_GPUCommandBuffer* commandBuffer;
-    
 };
 
 

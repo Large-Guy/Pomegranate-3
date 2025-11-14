@@ -13,7 +13,8 @@ DrawPass::DrawPass(const std::shared_ptr<Renderer>& renderer) : RenderPass(rende
 }
 
 DrawPass::~DrawPass() {
-    DrawPass::end();
+    if (this->renderPass != nullptr)
+        DrawPass::end();
 }
 
 void DrawPass::clear(Color color) {
@@ -67,12 +68,22 @@ void DrawPass::begin(const std::weak_ptr<CommandQueue>& commandQueue) {
 
 void DrawPass::end() {
     if (renderPass == nullptr)
-        return;
+        throw std::runtime_error("RenderPass has not been started");
     SDL_EndGPURenderPass(static_cast<SDL_GPURenderPass*>(renderPass));
     renderPass = nullptr;
 }
 
+void DrawPass::scissor(float x, float y, float width, float height) const {
+    if (renderPass == nullptr)
+        throw std::runtime_error("Draw Pass has not been started");
+    SDL_Rect scissor = {static_cast<int>(x), static_cast<int>(y), static_cast<int>(width), static_cast<int>(height)};
+    SDL_SetGPUScissor(static_cast<SDL_GPURenderPass*>(renderPass), &scissor);
+}
+
+
 void DrawPass::drawPrimitives(int verticesCount, int vertexStart, int instancesCount, int instanceStart) const {
+    if (renderPass == nullptr)
+        throw std::runtime_error("Draw Pass has not been started");
     SDL_DrawGPUPrimitives(static_cast<SDL_GPURenderPass*>(renderPass), verticesCount, instancesCount, vertexStart,
                           instanceStart);
 }

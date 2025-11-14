@@ -18,6 +18,8 @@ public:
 
     void end() override;
 
+    void scissor(float x, float y, float width, float height) const;
+
     void drawPrimitives(int verticesCount, int vertexStart, int instancesCount, int instanceStart) const;
 
 private:
