@@ -28,7 +28,7 @@ struct alignas(16) PanelUniform {
 
 #define UI_LAYERS 2
 
-class WindowExample : public App {
+class FrostedGlassExample : public App {
 public:
     std::shared_ptr<Window> window;
     std::shared_ptr<Renderer> renderer;
@@ -211,7 +211,7 @@ public:
         }
     }
 
-    void drawRectangle(const std::weak_ptr<CommandQueue>& cmd, const std::shared_ptr<DrawPass>& pass, float x, float y,
+    void drawRectangle(const std::weak_ptr<CommandBuffer>& cmd, const std::shared_ptr<DrawPass>& pass, float x, float y,
                        float w, float h) const {
         int width, height;
         window->getSize(width, height);
@@ -230,7 +230,7 @@ public:
         pass->drawPrimitives(6, 0, 1, 0);
     }
 
-    void drawContainer(const std::weak_ptr<CommandQueue>& cmd, const std::shared_ptr<DrawPass>& pass,
+    void drawContainer(const std::weak_ptr<CommandBuffer>& cmd, const std::shared_ptr<DrawPass>& pass,
                        const std::shared_ptr<Container>& con) {
         auto [x, y, width, height] = con->real();
         panelPipeline->bind(cmd, pass);
@@ -338,7 +338,7 @@ public:
 };
 
 int main() {
-    std::shared_ptr<WindowExample> app = std::make_shared<WindowExample>();
+    std::shared_ptr<FrostedGlassExample> app = std::make_shared<FrostedGlassExample>();
 
     app->run();
 

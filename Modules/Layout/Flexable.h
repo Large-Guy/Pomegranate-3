@@ -11,12 +11,12 @@ public:
         Trailing
     };
 
-    Alignment xAlignment;
-    Alignment yAlignment;
-    bool xOverflow;
-    bool yOverflow;
-    bool xFill;
-    bool yFill;
+    Alignment xAlignment = Alignment::Leading;
+    Alignment yAlignment = Alignment::Leading;
+    bool xOverflow = false;
+    bool yOverflow = false;
+    bool xFill = false;
+    bool yFill = false;
 };
 
 

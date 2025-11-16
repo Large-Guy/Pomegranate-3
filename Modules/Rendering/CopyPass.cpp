@@ -5,11 +5,11 @@
 CopyPass::CopyPass(const std::shared_ptr<Renderer>& renderer) : RenderPass(renderer) {
 }
 
-void CopyPass::begin(const std::weak_ptr<CommandQueue>& commandQueue) {
+void CopyPass::begin(const std::weak_ptr<CommandBuffer>& commandQueue) {
     if (commandQueue.expired()) {
         throw std::runtime_error("CommandQueue has expired");
     }
-    std::shared_ptr<CommandQueue> commandBuffer = commandQueue.lock();
+    std::shared_ptr<CommandBuffer> commandBuffer = commandQueue.lock();
     this->renderPass = SDL_BeginGPUCopyPass(static_cast<SDL_GPUCommandBuffer*>(commandBuffer->getInternal()));
 }
 

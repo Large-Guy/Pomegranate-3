@@ -20,11 +20,13 @@ public:
 
     void disableTexture();
 
-    void begin(const std::weak_ptr<CommandQueue>& commandQueue) override;
+    void begin(const std::weak_ptr<CommandBuffer>& commandQueue) override;
 
     void end() override;
 
     void scissor(float x, float y, float width, float height) const;
+
+    void disableScissor();
 
     void drawPrimitives(int verticesCount, int vertexStart, int instancesCount, int instanceStart) const;
 

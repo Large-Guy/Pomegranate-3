@@ -75,8 +75,9 @@ Container::Position& Container::Position::operator=(Label label) {
 }
 
 void Container::appendChild(const std::shared_ptr<Container>& container) {
-    if (container->parent != nullptr) {
-        container->parent->removeChild(getParentIndex());
+    auto conParent = container->parent.lock();
+    if (conParent != nullptr) {
+        conParent->removeChild(getParentIndex());
     }
     this->children.push_back(container);
     container->parent = shared_from_this();
@@ -88,15 +89,16 @@ void Container::insertChild(size_t index, const std::shared_ptr<Container>& cont
 }
 
 void Container::removeChild(size_t index) {
-    this->children[index]->parent = nullptr;
+    this->children[index]->parent.reset();
     this->children.erase(this->children.begin() + index);
 }
 
 size_t Container::getParentIndex() const {
-    if (this->parent == nullptr)
+    auto lockParent = this->parent.lock();
+    if (lockParent == nullptr)
         return 0;
-    auto iter = std::find(this->parent->children.begin(), this->parent->children.end(), shared_from_this());
-    return iter - this->parent->children.begin();
+    auto iter = std::find(lockParent->children.begin(), lockParent->children.end(), shared_from_this());
+    return iter - lockParent->children.begin();
 }
 
 size_t Container::getChildCount() const {
@@ -112,12 +114,12 @@ void Container::compute() {
         child->rect.x = child->x.real(rect.x, rect.width);
         child->rect.y = child->y.real(rect.y, rect.height);
         child->rect.width = child->width.real(rect.width, rect.width);
-        child->rect.height = child->height.real(rect.height, rect.width);
+        child->rect.height = child->height.real(rect.height, rect.height);
     }
 }
 
 void Container::computeChildren() {
-    if (this->parent == nullptr) {
+    if (this->parent.expired()) {
         rect = {x.value, y.value, width.value, height.value};
     }
 

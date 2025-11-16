@@ -1,17 +1,17 @@
 #ifndef POMEGRANATE_DEVICE_H
 #define POMEGRANATE_DEVICE_H
-#include "CommandQueue.h"
+#include "CommandBuffer.h"
 
 class Renderer : public std::enable_shared_from_this<Renderer> {
 public:
     Renderer();
-    std::weak_ptr<CommandQueue> begin();
+    std::weak_ptr<CommandBuffer> begin();
     void end();
-    std::weak_ptr<CommandQueue> getCommandQueue();
+    std::weak_ptr<CommandBuffer> getCommandQueue();
     void* getInternal() const;
 private:
     struct SDL_GPUDevice* device;
-    std::shared_ptr<CommandQueue> currentCommandQueue;
+    std::shared_ptr<CommandBuffer> currentCommandQueue;
 };
 
 

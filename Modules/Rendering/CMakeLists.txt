@@ -1,8 +1,8 @@
 set(RenderingSrc
         Renderer.cpp
         Renderer.h
-        CommandQueue.cpp
-        CommandQueue.h
+        CommandBuffer.cpp
+        CommandBuffer.h
         RenderPass.cpp
         RenderPass.h
         Texture.cpp

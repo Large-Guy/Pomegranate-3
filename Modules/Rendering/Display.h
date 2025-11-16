@@ -11,7 +11,7 @@ public:
 
     ~Display();
 
-    void target(const std::weak_ptr<CommandQueue>& queue, const std::shared_ptr<Texture>& renderTexture);
+    void target(const std::weak_ptr<CommandBuffer>& queue, const std::shared_ptr<Texture>& renderTexture);
 
     void present() const;
 

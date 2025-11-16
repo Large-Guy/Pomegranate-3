@@ -66,8 +66,8 @@ public:
 
     Position x = {Position::Label::Auto, 0.0f};
     Position y = {Position::Label::Auto, 0.0f};
-    Scale width = {Scale::Label::Auto, 1.0f};
-    Scale height = {Scale::Label::Auto, 1.0f};
+    Scale width = {Scale::Label::Auto, 0.0f};
+    Scale height = {Scale::Label::Auto, 0.0f};
 
     Scale padding = {Scale::Label::Auto, 0.0f};
     Scale gap = {Scale::Label::Auto, 0.0f};
@@ -113,7 +113,7 @@ public:
     const_iterator cend() const;
 
 private:
-    std::shared_ptr<Container> parent;
+    std::weak_ptr<Container> parent;
     std::vector<std::shared_ptr<Container> > children;
 };
 

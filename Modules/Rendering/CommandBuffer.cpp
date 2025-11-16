@@ -1,15 +1,15 @@
-#include "CommandQueue.h"
+#include "CommandBuffer.h"
 
 #include "Renderer.h"
 #include "SDL3/SDL_gpu.h"
 
-CommandQueue::CommandQueue(const std::shared_ptr<Renderer>& device) {
+CommandBuffer::CommandBuffer(const std::shared_ptr<Renderer>& device) {
     this->device = device;
     this->commandBuffer = SDL_AcquireGPUCommandBuffer(static_cast<SDL_GPUDevice*>(device->getInternal()));
 }
 
-CommandQueue::~CommandQueue() = default;
+CommandBuffer::~CommandBuffer() = default;
 
-void* CommandQueue::getInternal() {
+void* CommandBuffer::getInternal() {
     return commandBuffer;
 }

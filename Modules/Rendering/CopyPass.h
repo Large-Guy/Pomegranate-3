@@ -6,7 +6,7 @@ class CopyPass final : public RenderPass {
 public:
     CopyPass(const std::shared_ptr<Renderer>& renderer);
     
-    void begin(const std::weak_ptr<CommandQueue>& commandQueue) override;
+    void begin(const std::weak_ptr<CommandBuffer>& commandQueue) override;
 
     void end() override;
 };

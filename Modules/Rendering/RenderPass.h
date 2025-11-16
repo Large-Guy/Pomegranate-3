@@ -12,7 +12,7 @@ public:
 
     virtual ~RenderPass() = default;
 
-    virtual void begin(const std::weak_ptr<CommandQueue>& commandQueue) = 0;
+    virtual void begin(const std::weak_ptr<CommandBuffer>& commandQueue) = 0;
 
     virtual void end() = 0;
 

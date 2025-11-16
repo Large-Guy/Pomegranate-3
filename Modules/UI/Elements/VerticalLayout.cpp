@@ -1,0 +1,10 @@
+#include "VerticalLayout.h"
+
+#include "Layout/Container.h"
+#include "Layout/Vertical.h"
+
+VerticalLayout::VerticalLayout() : UIElement(std::make_shared<Vertical>()) {
+    auto container = std::dynamic_pointer_cast<Vertical>(getContainer());
+    container->padding = {Container::Scale::Label::Pixel, 8.0f};
+    container->gap = {Container::Scale::Label::Pixel, 8.0f};
+}

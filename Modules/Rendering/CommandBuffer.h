@@ -3,11 +3,11 @@
 #include <memory>
 
 
-class CommandQueue {
+class CommandBuffer {
 public:
-    explicit CommandQueue(const std::shared_ptr<class Renderer>& device);
+    explicit CommandBuffer(const std::shared_ptr<class Renderer>& device);
 
-    ~CommandQueue();
+    ~CommandBuffer();
 
     void* getInternal();
 

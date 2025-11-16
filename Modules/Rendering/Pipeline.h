@@ -44,7 +44,7 @@ public:
 
     void build();
 
-    void bind(const std::weak_ptr<CommandQueue>& commandQueue, const std::shared_ptr<DrawPass>& pass);
+    void bind(const std::weak_ptr<CommandBuffer>& commandQueue, const std::shared_ptr<DrawPass>& pass);
 
     void uniformPtr(Shader::Type type, int index, void* info, size_t size) const;
 
@@ -65,7 +65,7 @@ private:
     CullMode cull;
     PrimitiveType primitiveType;
     struct SDL_GPUGraphicsPipeline* pipeline;
-    std::weak_ptr<CommandQueue> queue;
+    std::weak_ptr<CommandBuffer> queue;
     std::weak_ptr<DrawPass> pass;
     std::vector<std::shared_ptr<Texture> > textures;
     std::vector<std::shared_ptr<Sampler> > samplers;

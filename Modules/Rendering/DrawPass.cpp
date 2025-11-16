@@ -46,12 +46,12 @@ void DrawPass::disableTexture() {
 }
 
 
-void DrawPass::begin(const std::weak_ptr<CommandQueue>& commandQueue) {
+void DrawPass::begin(const std::weak_ptr<CommandBuffer>& commandQueue) {
     if (commandQueue.expired()) {
         throw std::runtime_error("CommandQueue has expired");
     }
 
-    std::shared_ptr<CommandQueue> commandBuffer = commandQueue.lock();
+    std::shared_ptr<CommandBuffer> commandBuffer = commandQueue.lock();
     SDL_GPUColorTargetInfo colorTargetInfo = {};
 
     if (elements[ElementTexture]) {
@@ -92,6 +92,12 @@ void DrawPass::scissor(float x, float y, float width, float height) const {
         throw std::runtime_error("Draw Pass has not been started");
     SDL_Rect scissor = {static_cast<int>(x), static_cast<int>(y), static_cast<int>(width), static_cast<int>(height)};
     SDL_SetGPUScissor(static_cast<SDL_GPURenderPass*>(renderPass), &scissor);
+}
+
+void DrawPass::disableScissor() {
+    if (renderPass == nullptr)
+        throw std::runtime_error("Draw Pass has not been started");
+    SDL_SetGPUScissor(static_cast<SDL_GPURenderPass*>(renderPass), nullptr);
 }
 
 

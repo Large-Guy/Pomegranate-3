@@ -14,8 +14,8 @@ void* Renderer::getInternal() const {
     return device;
 }
 
-std::weak_ptr<CommandQueue> Renderer::begin() {
-    currentCommandQueue = std::make_shared<CommandQueue>(shared_from_this());
+std::weak_ptr<CommandBuffer> Renderer::begin() {
+    currentCommandQueue = std::make_shared<CommandBuffer>(shared_from_this());
     return currentCommandQueue;
 }
 
@@ -28,7 +28,7 @@ void Renderer::end() {
     currentCommandQueue.reset();
 }
 
-std::weak_ptr<CommandQueue> Renderer::getCommandQueue() {
+std::weak_ptr<CommandBuffer> Renderer::getCommandQueue() {
     return currentCommandQueue;
 }
 

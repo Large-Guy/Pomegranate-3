@@ -1,5 +1,8 @@
 #include "Vertical.h"
 
+#include <iostream>
+#include <ostream>
+
 void Vertical::compute() {
     float xPadding = padding.real(rect.width, 0);
     float yPadding = padding.real(rect.height, 0);
@@ -8,6 +11,7 @@ void Vertical::compute() {
 
     float totalPercent = 0.0f;
     float remainingPhysical = paddedHeight - gap.real(paddedHeight, 0) * getChildCount();
+
     int autoCount = 0;
 
     for (auto& child: *this) {

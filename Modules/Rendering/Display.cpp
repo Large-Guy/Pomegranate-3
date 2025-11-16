@@ -22,7 +22,7 @@ Display::~Display() {
     }
 }
 
-void Display::target(const std::weak_ptr<CommandQueue>& queue, const std::shared_ptr<Texture>& renderTexture) {
+void Display::target(const std::weak_ptr<CommandBuffer>& queue, const std::shared_ptr<Texture>& renderTexture) {
     if (queue.expired()) {
         return;
     }

@@ -183,7 +183,7 @@ void Pipeline::build() {
             SDL_CreateGPUGraphicsPipeline(static_cast<SDL_GPUDevice*>(renderer->getInternal()), &pipeline_info);
 }
 
-void Pipeline::bind(const std::weak_ptr<CommandQueue>& commandQueue, const std::shared_ptr<DrawPass>& pass) {
+void Pipeline::bind(const std::weak_ptr<CommandBuffer>& commandQueue, const std::shared_ptr<DrawPass>& pass) {
     this->queue = commandQueue;
     this->pass = pass;
     SDL_BindGPUGraphicsPipeline(static_cast<SDL_GPURenderPass*>(pass->getInternal()), pipeline);
