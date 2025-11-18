@@ -268,7 +268,7 @@ public:
 
         sidebarContents->yOffset = sinf(time * 0.1f) * 360;
 
-        container->computeChildren();
+        container->compute();
 
         auto cmdQueue = renderer->begin();
 

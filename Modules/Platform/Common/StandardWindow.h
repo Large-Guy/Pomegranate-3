@@ -33,6 +33,8 @@ public:
 
     void getPosition(int& x, int& y) override;
 
+    float getScale() override;
+
     void setTitle(std::string title) override;
 
     std::string getTitle() override;

@@ -3,8 +3,10 @@
 
 #include <vector>
 
+#include "Core/Reflective.h"
 
-class Container : public std::enable_shared_from_this<Container> {
+
+class Container : public std::enable_shared_from_this<Container>, public Reflective {
 public:
     virtual ~Container() = default;
 
@@ -39,7 +41,7 @@ public:
 
         Scale& operator=(Label label);
 
-        [[nodiscard]] float real(float relative, float autoSize, float scale = 1.0f) const;
+        [[nodiscard]] float real(float relative, float autoSize, float scale, float percentScale) const;
     };
 
     struct Position {
@@ -61,7 +63,7 @@ public:
 
         Position& operator=(Label label);
 
-        [[nodiscard]] float real(float start, float relative, float scale = 1.0f) const;
+        [[nodiscard]] float real(float start, float relative, float scale) const;
     };
 
     Position x = {Position::Label::Auto, 0.0f};
@@ -74,8 +76,13 @@ public:
 
     Output rect{};
 
+    Position xPivot;
+    Position yPivot;
+
     Position xOffset = {Position::Label::Auto, 0.0f};
     Position yOffset = {Position::Label::Auto, 0.0f};
+
+    Container();
 
     void appendChild(const std::shared_ptr<Container>& container);
 
@@ -94,9 +101,7 @@ public:
         return std::dynamic_pointer_cast<T>(getChild(index));
     }
 
-    virtual void compute();
-
-    void computeChildren();
+    void compute(float scale = 1.0f);
 
     [[nodiscard]] Output real() const;
 
@@ -111,6 +116,9 @@ public:
     const_iterator cbegin() const;
 
     const_iterator cend() const;
+
+protected:
+    virtual void computeRect(float scale);
 
 private:
     std::weak_ptr<Container> parent;

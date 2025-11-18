@@ -13,9 +13,10 @@ class UICompositor {
 public:
     explicit UICompositor(const std::shared_ptr<Renderer>& renderer);
 
-    void pushLayer(const std::shared_ptr<UILayer>& layer);
+    void addLayer(const std::shared_ptr<UILayer>& layer);
 
-    std::shared_ptr<Texture> render(Viewport screen, const std::weak_ptr<CommandBuffer>& commandBuffer);
+    std::shared_ptr<Texture> render(Viewport screen, float scale, const std::shared_ptr<Theme>& theme,
+                                    const std::weak_ptr<CommandBuffer>& commandBuffer);
 
 private:
     std::shared_ptr<Renderer> renderer;
@@ -28,6 +29,8 @@ private:
     std::vector<std::shared_ptr<UILayer> > layers;
 
     std::shared_ptr<Pipeline> pipeline;
+
+    friend class UILayer;
 };
 
 

@@ -5,7 +5,7 @@
 
 class Horizontal : public Flexable {
 public:
-    void compute() override;
+    void computeRect(float scale) override;
 };
 
 

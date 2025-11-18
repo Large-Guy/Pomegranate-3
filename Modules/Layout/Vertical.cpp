@@ -3,14 +3,15 @@
 #include <iostream>
 #include <ostream>
 
-void Vertical::compute() {
-    float xPadding = padding.real(rect.width, 0);
-    float yPadding = padding.real(rect.height, 0);
+void Vertical::computeRect(float scale) {
+    float xPadding = padding.real(rect.width, 0, scale, 1.0f);
+    float yPadding = padding.real(rect.height, 0, scale, 1.0f);
 
-    float paddedHeight = rect.height - yPadding;
+    float paddedHeight = rect.height - yPadding * 2.0f;
 
     float totalPercent = 0.0f;
-    float remainingPhysical = paddedHeight - gap.real(paddedHeight, 0) * getChildCount();
+    float remainingPhysical = paddedHeight - gap.real(paddedHeight, 0, scale, 1.0f) * static_cast<float>(
+                                  getChildCount() - 1);
 
     int autoCount = 0;
 
@@ -23,7 +24,7 @@ void Vertical::compute() {
                 totalPercent += child->height.value;
                 break;
             case Scale::Label::Pixel:
-                remainingPhysical -= child->height.value; //TODO: Implement scaling
+                remainingPhysical -= child->height.value * scale;
                 break;
             case Scale::Label::Physical:
                 remainingPhysical -= child->height.value;
@@ -63,12 +64,12 @@ void Vertical::compute() {
         child->rect.width = rect.width - xPadding * 2.0f;
 
         child->rect.y = rect.y + yPadding + consumed + alignmentOffset;
-        child->rect.height = child->height.real(paddedHeight, autoSize);
+        child->rect.height = child->height.real(paddedHeight, autoSize, scale, percentScale);
 
         consumed += child->rect.height;
 
         if (child != *end()) {
-            consumed += gap.real(paddedHeight, 0.0f);
+            consumed += gap.real(paddedHeight, 0.0f, scale, percentScale);
         }
     }
 }

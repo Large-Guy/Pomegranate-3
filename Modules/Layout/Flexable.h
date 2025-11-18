@@ -11,6 +11,8 @@ public:
         Trailing
     };
 
+    Flexable();
+
     Alignment xAlignment = Alignment::Leading;
     Alignment yAlignment = Alignment::Leading;
     bool xOverflow = false;

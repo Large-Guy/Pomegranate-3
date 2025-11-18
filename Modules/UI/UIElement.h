@@ -2,6 +2,7 @@
 #define POMEGRANATE_UIELEMENT_H
 #include <memory>
 
+#include "Theme.h"
 #include "Layout/Container.h"
 #include "Rendering/CommandBuffer.h"
 #include "Rendering/DrawPass.h"
@@ -12,7 +13,7 @@ public:
     using iterator = typename std::vector<std::shared_ptr<UIElement> >::iterator;
     using const_iterator = typename std::vector<std::shared_ptr<UIElement> >::const_iterator;
 
-    UIElement(const std::shared_ptr<Container>& container);
+    explicit UIElement(const std::shared_ptr<Container>& container);
 
     virtual ~UIElement();
 
@@ -20,11 +21,17 @@ public:
 
     virtual void onRemovedFromLayer();
 
-    virtual void render(Viewport screen, const std::weak_ptr<CommandBuffer>& commandBuffer,
+    virtual void render(Viewport screen, float scale, const std::shared_ptr<Theme>& theme,
+                        const std::weak_ptr<CommandBuffer>& commandBuffer,
                         const std::shared_ptr<DrawPass>& drawPass,
                         const std::shared_ptr<Texture>& background);
 
     std::shared_ptr<Container> getContainer();
+
+    template<typename T>
+    std::shared_ptr<T> getContainer() {
+        return std::dynamic_pointer_cast<T>(getContainer());
+    }
 
     void addChild(const std::shared_ptr<UIElement>& child);
 
@@ -32,7 +39,9 @@ public:
 
     std::shared_ptr<UIElement> getChild(int index);
 
-    std::weak_ptr<UIElement> getParent();
+    std::weak_ptr<UIElement> getParent() const;
+
+    std::weak_ptr<UIElement> getRoot();
 
     iterator begin();
 
@@ -47,9 +56,9 @@ public:
     const_iterator cend() const;
 
 protected:
-    virtual void addChildImpl(const std::shared_ptr<UIElement>& child);
+    virtual void onChildAdded(const std::shared_ptr<UIElement>& child);
 
-    virtual void removeChildImpl(int index);
+    virtual void onChildRemoved(int index);
 
 private:
     std::shared_ptr<Container> container;

@@ -17,14 +17,21 @@ struct Layout
     float4 rect;
 };
 
+struct Theme
+{
+    float4 fill;
+    float4 outline;
+};
+
 cbuffer vert : register(b0, space1)
 {
     Layout vlayout;
 }
 
-cbuffer frag : register(b0, space1)
+cbuffer frag : register(b0, space3)
 {
     Layout flayout;
+    Theme theme;
 }
 
 Output _vertex(Input input)
@@ -81,8 +88,12 @@ bool edging(Output input, float rounding, float size)
     bool q2 = sdfRoundedBox(input.pixelUV + float2(-size, 0.0), flayout.rect.zw, rounding) < 0.0f;
     bool q3 = sdfRoundedBox(input.pixelUV + float2(0.0, size), flayout.rect.zw, rounding) < 0.0f;
     bool q4 = sdfRoundedBox(input.pixelUV + float2(0.0, -size), flayout.rect.zw, rounding) < 0.0f;
+    bool q5 = sdfRoundedBox(input.pixelUV + (float2(size, size)), flayout.rect.zw, rounding) < 0.0f;
+    bool q6 = sdfRoundedBox(input.pixelUV + (float2(-size, size)), flayout.rect.zw, rounding) < 0.0f;
+    bool q7 = sdfRoundedBox(input.pixelUV + (float2(size, -size)), flayout.rect.zw, rounding) < 0.0f;
+    bool q8 = sdfRoundedBox(input.pixelUV + (float2(-size, -size)), flayout.rect.zw, rounding) < 0.0f;
 
-    return q != q1 || q != q2 || q != q3 || q != q4;
+    return q != q1 || q != q2 || q != q3 || q != q4 || q != q5 || q != q6 || q != q7 || q != q8;
 }
 
 float clamp01(float v)
@@ -92,8 +103,9 @@ float clamp01(float v)
 
 float4 _fragment(Output input) : SV_TARGET
 {
-    float4 color = float4(input.uv.xy, 0.0f, 1.0f);
     float rounding = 24.0f;
+
+    float4 color;
     float minBreadth = min(flayout.rect.z, flayout.rect.w);
     rounding = min(rounding, minBreadth);
     float sdfQuery = sdfRoundedBox(input.pixelUV, flayout.rect.zw, rounding);
@@ -104,19 +116,19 @@ float4 _fragment(Output input) : SV_TARGET
     {
         float shadow = 8;
 
-        bool edge = edging(input, rounding, 1.0f);
+        bool edge = edging(input, rounding, 4.0f);
         if(edge)
         {
-            color.xyz = float3(0.2f,0.2f,0.2f);
+            color = theme.outline;
         }
         else
         {
-            color.xyz = lerp(float3(0.125f,0.125f,0.125f), float3(0.15f, 0.15f, 0.15f), clamp01((flayout.rect.w - input.pixelUV.y) / shadow));
+            color = theme.fill;
         }
     }
     else
     {
-        color.a = 0.0f;
+        color = float4(0.0f, 0.0f, 0.0f, 0.0f);
     }
     return color;
 }

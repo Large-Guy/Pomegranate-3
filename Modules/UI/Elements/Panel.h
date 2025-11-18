@@ -10,17 +10,27 @@ public:
 
     void onAddedToLayer(const std::shared_ptr<Renderer>& renderer) override;
 
-    void render(Viewport screen, const std::weak_ptr<CommandBuffer>& commandBuffer,
+    void render(Viewport screen, float scale, const std::shared_ptr<Theme>& theme,
+                const std::weak_ptr<CommandBuffer>& commandBuffer,
                 const std::shared_ptr<DrawPass>& drawPass,
                 const std::shared_ptr<Texture>& background) override;
 
-private:
+    std::string fill = "primary-fill";
+    std::string border = "primary-border";
+
+protected:
     struct alignas(16) PanelUniform {
         float screenX, screenY, screenW, screenH;
         float rectX, rectY, rectW, rectH;
+
+        Color fill;
+        Color border;
     };
 
     std::shared_ptr<Pipeline> pipeline;
+
+private:
+    static std::shared_ptr<Pipeline> standardPipeline;
 };
 
 

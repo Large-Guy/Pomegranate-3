@@ -82,6 +82,10 @@ void StandardWindow::getPosition(int& x, int& y) {
     SDL_GetWindowPosition(this->window, &x, &y);
 }
 
+float StandardWindow::getScale() {
+    return SDL_GetWindowDisplayScale(this->window);
+}
+
 std::string StandardWindow::getTitle() {
     return this->title;
 }

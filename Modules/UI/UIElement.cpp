@@ -13,7 +13,8 @@ void UIElement::onAddedToLayer(const std::shared_ptr<Renderer>& renderer) {
 void UIElement::onRemovedFromLayer() {
 }
 
-void UIElement::render(Viewport screen, const std::weak_ptr<CommandBuffer>& commandBuffer,
+void UIElement::render(Viewport screen, float scale, const std::shared_ptr<Theme>& theme,
+                       const std::weak_ptr<CommandBuffer>& commandBuffer,
                        const std::shared_ptr<DrawPass>& drawPass,
                        const std::shared_ptr<Texture>& background) {
 }
@@ -25,20 +26,28 @@ std::shared_ptr<Container> UIElement::getContainer() {
 void UIElement::addChild(const std::shared_ptr<UIElement>& child) {
     this->children.push_back(child);
     child->parent = shared_from_this();
-    addChildImpl(child);
+    onChildAdded(child);
 }
 
 void UIElement::removeChild(int index) {
     this->children.erase(this->children.begin() + index);
-    this->removeChildImpl(index);
+    this->onChildRemoved(index);
 }
 
 std::shared_ptr<UIElement> UIElement::getChild(int index) {
     return children[index];
 }
 
-std::weak_ptr<UIElement> UIElement::getParent() {
+std::weak_ptr<UIElement> UIElement::getParent() const {
     return this->parent;
+}
+
+std::weak_ptr<UIElement> UIElement::getRoot() {
+    auto current = weak_from_this();
+    while (!current.lock()->getParent().expired()) {
+        current = getParent();
+    }
+    return current;
 }
 
 UIElement::iterator UIElement::begin() {
@@ -65,10 +74,10 @@ UIElement::const_iterator UIElement::cend() const {
     return children.cend();
 }
 
-void UIElement::addChildImpl(const std::shared_ptr<UIElement>& child) {
+void UIElement::onChildAdded(const std::shared_ptr<UIElement>& child) {
     container->appendChild(child->getContainer());
 }
 
-void UIElement::removeChildImpl(const int index) {
+void UIElement::onChildRemoved(const int index) {
     container->removeChild(index);
 }

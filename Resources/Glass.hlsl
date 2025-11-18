@@ -87,32 +87,35 @@ float clamp01(float v)
 
 float4 _fragment(Output input) : SV_TARGET
 {
-    static const int samples = 64;
+    static const int samples = 8;
     static const float rounding = 24.0f;
 
     float4 color = float4(0.0f, 0.0f, 0.0f, 0.0f);
     float total = 0.0;
-    float radius = 0.025f;
+    float radius = 0.03f;
     for(int i = 0; i < samples; i++)
     {
-        float2 uv = input.screenUV;
-        uv += float2(rand(input.screenUV + (float)i * 3.14159f) - 0.5f, rand(input.screenUV + 1.0f + (float)i * 3.14159f) - 0.5f) * radius;
-        float intensity = (0.05f - distance(uv, input.screenUV)) / radius;
-        color += background.Sample(backgroundSampler, uv) * intensity;
-        total += intensity;
+         float angle = float(i) * 2.39996323; //Golden ratio angle
+         float dist = sqrt(float(i) / float(samples)) * radius;
+
+         float2 offset = float2(cos(angle), sin(angle)) * dist;
+         color += background.Sample(backgroundSampler, input.screenUV + offset);
     }
 
-    color /= total;
+    color /= (float)samples;
+
+    color = clamp(color, 0.0f, 1.0f);
+
+    //color.r = background.Sample(backgroundSampler, input.screenUV + float2(radius * 0.5, 0.0)).r;
+    //color.b = background.Sample(backgroundSampler, input.screenUV - float2(radius * 0.5, 0.0)).b;
 
     float sdfQuery = sdfRoundedBox(input.pixelUV, flayout.rect.zw, rounding);
     if(sdfQuery < 0.0f)
     {
-        color.a = 1.0f;
-
-        bool edge = edging(input, rounding, 2.0f);
+        bool edge = edging(input, rounding, 4.0f);
         if(edge)
         {
-            color.xyz += float3(0.1f, 0.1f, 0.1f);
+            color += float4(0.2f, 0.2f, 0.2f, 1.0f);
         }
     }
     else

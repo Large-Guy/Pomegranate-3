@@ -5,7 +5,7 @@
 
 class Vertical final : public Flexable {
 public:
-    void compute() override;
+    void computeRect(float scale) override;
 };
 
 

@@ -1,5 +1,8 @@
 #include "UICompositor.h"
 
+#include <iostream>
+#include <ostream>
+
 UICompositor::UICompositor(const std::shared_ptr<Renderer>& renderer) {
     this->renderer = renderer;
 
@@ -16,13 +19,16 @@ UICompositor::UICompositor(const std::shared_ptr<Renderer>& renderer) {
     this->pipeline->build();
 
     this->sampler = std::make_shared<Sampler>(renderer, Sampler::Filter::Nearest, Sampler::Wrap::Clamp);
+
+    this->layers = {};
 }
 
-void UICompositor::pushLayer(const std::shared_ptr<UILayer>& layer) {
+void UICompositor::addLayer(const std::shared_ptr<UILayer>& layer) {
     this->layers.push_back(layer);
 }
 
-std::shared_ptr<Texture> UICompositor::render(Viewport screen, const std::weak_ptr<CommandBuffer>& commandBuffer) {
+std::shared_ptr<Texture> UICompositor::render(Viewport screen, float scale, const std::shared_ptr<Theme>& theme,
+                                              const std::weak_ptr<CommandBuffer>& commandBuffer) {
     if (ping == nullptr || ping->width() != static_cast<int>(screen.w) || ping->height() !=
         static_cast<int>(screen.h)) {
         ping = std::make_shared<Texture>(renderer, Texture::Format::R8G8B8A8_SRGB, screen.w, screen.h, 1,
@@ -48,7 +54,7 @@ std::shared_ptr<Texture> UICompositor::render(Viewport screen, const std::weak_p
     compositePass->viewport(screen);
 
     for (const auto& i: layers) {
-        auto layer = i->render(screen, commandBuffer, ping);
+        auto layer = i->render(screen, scale, theme, commandBuffer, ping);
 
         //Render to pong
         compositePass->texture(pong);

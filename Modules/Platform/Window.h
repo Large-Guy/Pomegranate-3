@@ -39,6 +39,8 @@ public:
 
     virtual void getPosition(int& x, int& y) = 0;
 
+    virtual float getScale() = 0;
+
     virtual void setTitle(std::string title) = 0;
 
     virtual std::string getTitle() = 0;

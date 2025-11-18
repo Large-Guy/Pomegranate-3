@@ -4,7 +4,7 @@
 
 
 class Fill : public Flexable {
-    void compute() override;
+    void computeRect(float scale) override;
 };
 
 

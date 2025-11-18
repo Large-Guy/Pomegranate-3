@@ -13,11 +13,12 @@ public:
 
     void target(const std::weak_ptr<CommandBuffer>& queue, const std::shared_ptr<Texture>& renderTexture);
 
-    void present() const;
+    void present();
 
 private:
     std::shared_ptr<Window> window;
     std::shared_ptr<Renderer> renderer;
+    std::shared_ptr<Texture> toDisplay;
     struct SDL_Renderer* sdlRenderer;
     struct SDL_Texture* texture;
     int width, height;

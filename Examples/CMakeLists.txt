@@ -1,2 +1,3 @@
 add_subdirectory(FrostedGlass)
 add_subdirectory(UI)
+add_subdirectory(MessagingAppUI)
