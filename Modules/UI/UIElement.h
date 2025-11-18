@@ -4,11 +4,12 @@
 
 #include "Theme.h"
 #include "Layout/Container.h"
+#include "Nodes/Node.h"
 #include "Rendering/CommandBuffer.h"
 #include "Rendering/DrawPass.h"
 
 
-class UIElement : public std::enable_shared_from_this<UIElement> {
+class UIElement : public Node<UIElement> {
 public:
     using iterator = typename std::vector<std::shared_ptr<UIElement> >::iterator;
     using const_iterator = typename std::vector<std::shared_ptr<UIElement> >::const_iterator;
@@ -33,37 +34,13 @@ public:
         return std::dynamic_pointer_cast<T>(getContainer());
     }
 
-    void addChild(const std::shared_ptr<UIElement>& child);
-
-    void removeChild(int index);
-
-    std::shared_ptr<UIElement> getChild(int index);
-
-    std::weak_ptr<UIElement> getParent() const;
-
-    std::weak_ptr<UIElement> getRoot();
-
-    iterator begin();
-
-    iterator end();
-
-    const_iterator begin() const;
-
-    const_iterator end() const;
-
-    const_iterator cbegin() const;
-
-    const_iterator cend() const;
-
 protected:
-    virtual void onChildAdded(const std::shared_ptr<UIElement>& child);
+    void onChildAdded(const std::shared_ptr<UIElement>& child) override;
 
-    virtual void onChildRemoved(int index);
+    void onChildRemoved(const std::shared_ptr<UIElement>& child) override;
 
 private:
     std::shared_ptr<Container> container;
-    std::weak_ptr<UIElement> parent;
-    std::vector<std::shared_ptr<UIElement> > children;
 };
 
 

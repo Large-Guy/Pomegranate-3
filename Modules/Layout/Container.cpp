@@ -87,41 +87,6 @@ Container::Container() {
     reg("yPivot", yPivot);
 }
 
-void Container::appendChild(const std::shared_ptr<Container>& container) {
-    auto conParent = container->parent.lock();
-    if (conParent != nullptr) {
-        conParent->removeChild(getParentIndex());
-    }
-    this->children.push_back(container);
-    container->parent = shared_from_this();
-}
-
-void Container::insertChild(size_t index, const std::shared_ptr<Container>& container) {
-    this->children.insert(this->children.begin() + index, container);
-    container->parent = shared_from_this();
-}
-
-void Container::removeChild(size_t index) {
-    this->children[index]->parent.reset();
-    this->children.erase(this->children.begin() + index);
-}
-
-size_t Container::getParentIndex() const {
-    auto lockParent = this->parent.lock();
-    if (lockParent == nullptr)
-        return 0;
-    auto iter = std::find(lockParent->children.begin(), lockParent->children.end(), shared_from_this());
-    return iter - lockParent->children.begin();
-}
-
-size_t Container::getChildCount() const {
-    return children.size();
-}
-
-std::shared_ptr<Container> Container::getChild(size_t index) const {
-    return children[index];
-}
-
 void Container::computeRect(float scale) {
     for (const auto& child: children) {
         child->rect.x = child->x.real(rect.x, rect.width, scale);
@@ -148,28 +113,4 @@ void Container::compute(float scale) {
 
 Container::Output Container::real() const {
     return rect;
-}
-
-Container::iterator Container::begin() {
-    return children.begin();
-}
-
-Container::iterator Container::end() {
-    return children.end();
-}
-
-Container::const_iterator Container::begin() const {
-    return children.begin();
-}
-
-Container::const_iterator Container::end() const {
-    return children.end();
-}
-
-Container::const_iterator Container::cbegin() const {
-    return children.cbegin();
-}
-
-Container::const_iterator Container::cend() const {
-    return children.cend();
 }

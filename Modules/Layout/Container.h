@@ -4,9 +4,10 @@
 #include <vector>
 
 #include "Core/Reflective.h"
+#include "Nodes/Node.h"
 
 
-class Container : public std::enable_shared_from_this<Container>, public Reflective {
+class Container : public Node<Container>, public Reflective {
 public:
     virtual ~Container() = default;
 
@@ -84,38 +85,9 @@ public:
 
     Container();
 
-    void appendChild(const std::shared_ptr<Container>& container);
-
-    void insertChild(size_t index, const std::shared_ptr<Container>& container);
-
-    void removeChild(size_t index);
-
-    size_t getParentIndex() const;
-
-    size_t getChildCount() const;
-
-    std::shared_ptr<Container> getChild(size_t index) const;
-
-    template<typename T>
-    std::shared_ptr<T> getChild(size_t index) const {
-        return std::dynamic_pointer_cast<T>(getChild(index));
-    }
-
     void compute(float scale = 1.0f);
 
     [[nodiscard]] Output real() const;
-
-    iterator begin();
-
-    iterator end();
-
-    const_iterator begin() const;
-
-    const_iterator end() const;
-
-    const_iterator cbegin() const;
-
-    const_iterator cend() const;
 
 protected:
     virtual void computeRect(float scale);

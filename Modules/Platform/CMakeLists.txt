@@ -14,7 +14,7 @@ if (APPLE)
             MacOS/Effects.mm
             MacOS/Effects.hpp
     )
-    
+
     set(PlatformSrc ${PlatformSrc} ${PlatformMacOS})
 elseif (__LINUX)
     message("Using Linux backend")

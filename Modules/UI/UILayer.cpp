@@ -35,7 +35,7 @@ std::shared_ptr<Texture> UILayer::render(Viewport screen, float scale, const std
 static void recurseElementAdded(const std::shared_ptr<Renderer>& renderer, const std::shared_ptr<UIElement>& element) {
     element->onAddedToLayer(renderer);
     for (const auto& child: *element) {
-        recurseElementAdded(renderer, child);
+        recurseElementAdded(renderer, std::dynamic_pointer_cast<UIElement>(child));
     }
 }
 
@@ -44,7 +44,7 @@ static void recurseElementRemoved(const std::shared_ptr<Renderer>& renderer,
                                   const std::shared_ptr<UIElement>& element) {
     element->onRemovedFromLayer();
     for (const auto& child: *element) {
-        recurseElementRemoved(renderer, child);
+        recurseElementRemoved(renderer, std::dynamic_pointer_cast<UIElement>(child));
     }
 }
 
@@ -63,13 +63,14 @@ void UILayer::drawElements(Viewport screen, float scale, const std::shared_ptr<T
                            const std::weak_ptr<CommandBuffer>& commandBuffer,
                            const std::shared_ptr<DrawPass>& drawPass,
                            const std::shared_ptr<Texture>& background, const std::shared_ptr<UIElement>& element) {
-    if (const auto parent = element->getParent().lock()) {
+    if (const auto parent = element->getParent<UIElement>()) {
         const auto container = parent->getContainer();
         auto [x, y, width, height] = container->real();
         drawPass->scissor(x, y, width, height);
     }
     element->render(screen, scale, theme, commandBuffer, drawPass, background);
     for (const auto& child: *element) {
-        drawElements(screen, scale, theme, commandBuffer, drawPass, background, child);
+        drawElements(screen, scale, theme, commandBuffer, drawPass, background,
+                     std::dynamic_pointer_cast<UIElement>(child));
     }
 }

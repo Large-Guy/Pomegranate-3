@@ -1,7 +1,8 @@
 #include "Fill.h"
 
 void Fill::computeRect(float scale) {
-    for (auto& child: *this) {
+    for (auto& node: *this) {
+        auto child = std::dynamic_pointer_cast<Container>(node);
         float xPadding = padding.real(rect.width, 0, scale, 1.0f);
         float yPadding = padding.real(rect.height, 0, scale, 1.0f);
         child->rect.x = rect.x + xPadding;

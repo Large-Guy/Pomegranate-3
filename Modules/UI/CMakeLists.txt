@@ -27,4 +27,4 @@ add_library(UI STATIC
         ${UISrc}
 )
 
-target_link_libraries(UI PUBLIC Core Dependencies Platform Rendering)
+target_link_libraries(UI PUBLIC Core Dependencies Platform Rendering Nodes)

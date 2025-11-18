@@ -11,4 +11,4 @@ add_library(Layout STATIC
         Fill.h
 )
 
-target_link_libraries(Layout PUBLIC)
+target_link_libraries(Layout PUBLIC Nodes)
