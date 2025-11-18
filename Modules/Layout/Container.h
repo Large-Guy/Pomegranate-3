@@ -91,10 +91,6 @@ public:
 
 protected:
     virtual void computeRect(float scale);
-
-private:
-    std::weak_ptr<Container> parent;
-    std::vector<std::shared_ptr<Container> > children;
 };
 
 

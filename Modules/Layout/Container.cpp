@@ -88,7 +88,7 @@ Container::Container() {
 }
 
 void Container::computeRect(float scale) {
-    for (const auto& child: children) {
+    for (const auto& child: *this) {
         child->rect.x = child->x.real(rect.x, rect.width, scale);
         child->rect.y = child->y.real(rect.y, rect.height, scale);
         child->rect.width = child->width.real(rect.width, rect.width, scale, 1.0f);
@@ -97,7 +97,7 @@ void Container::computeRect(float scale) {
 }
 
 void Container::compute(float scale) {
-    if (this->parent.expired()) {
+    if (getParent() == nullptr) {
         rect = {x.value, y.value, width.value, height.value};
     }
 
@@ -106,7 +106,7 @@ void Container::compute(float scale) {
 
     computeRect(scale);
 
-    for (auto& child: children) {
+    for (auto& child: *this) {
         child->compute(scale);
     }
 }

@@ -59,6 +59,7 @@ public:
 
         //Split the screen vertically
         auto split = std::make_shared<HorizontalLayout>();
+        root->addChild(split);
         split->getContainer<Flexable>()->xFill = true;
         split->getContainer<Flexable>()->xOverflow = false;
         split->getContainer<Flexable>()->gap = 0;
@@ -104,8 +105,6 @@ public:
 
         messageSplit->addChild(messageBox);
 
-
-        root->addChild(split);
 
         auto mainLayer = std::make_shared<UILayer>(renderer);
         mainLayer->addElement(root);

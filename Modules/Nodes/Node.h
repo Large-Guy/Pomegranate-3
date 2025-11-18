@@ -5,7 +5,7 @@
 
 
 template<typename T>
-class Node : public std::enable_shared_from_this<Node<T> > {
+class Node : public std::enable_shared_from_this<T> {
 public:
     using iterator = std::vector<std::shared_ptr<T> >::iterator;
     using const_iterator = std::vector<std::shared_ptr<T> >::const_iterator;
@@ -15,43 +15,46 @@ public:
     virtual ~Node() = default;
 
     void addChild(const std::shared_ptr<T>& node) {
-        children.push_back(node);
+        this->children.push_back(node);
+        std::dynamic_pointer_cast<Node>(node)->parent = this->shared_from_this();
         node->onAdded(std::dynamic_pointer_cast<T>(this->shared_from_this()));
-        onChildAdded(node);
+        this->onChildAdded(node);
     }
 
     void removeChild(const std::shared_ptr<T>& node) {
-        onChildRemoved(node);
+        this->onChildRemoved(node);
         node->onRemoved(std::dynamic_pointer_cast<T>(this->shared_from_this()));
-        std::erase(children, node);
+        std::erase(this->children, node);
+        std::dynamic_pointer_cast<Node>(node)->parent.reset();
     }
 
     void removeChildAt(size_t index) {
-        onChildRemoved(children[index]);
+        this->onChildRemoved(this->children[index]);
         children[index]->onRemoved(this->shared_from_this());
-        children.erase(children.begin() + index);
+        std::dynamic_pointer_cast<Node>(children[index])->parent.reset();
+        children.erase(this->children.begin() + index);
     }
 
     size_t getChildCount() const {
-        return children.size();
+        return this->children.size();
     }
 
     std::shared_ptr<T> getChild(size_t index) {
-        return children[index];
+        return this->children[index];
     }
 
     template<typename S>
     std::shared_ptr<S> getChild(size_t index) {
-        return std::dynamic_pointer_cast<S>(getChild(index));
+        return std::dynamic_pointer_cast<S>(this->getChild(index));
     }
 
     std::shared_ptr<T> getParent() {
-        return parent.lock();
+        return this->parent.lock();
     }
 
     template<typename S>
     std::shared_ptr<S> getParent() {
-        return std::dynamic_pointer_cast<S>(getParent());
+        return std::dynamic_pointer_cast<S>(this->getParent());
     }
 
     std::shared_ptr<T> getRoot() {
@@ -66,37 +69,37 @@ public:
 
     template<typename S>
     std::shared_ptr<S> getRoot() {
-        return std::dynamic_pointer_cast<S>(getRoot());
+        return std::dynamic_pointer_cast<S>(this->getRoot());
     }
 
     void destroy() {
-        if (parent.expired())
+        if (this->parent.expired())
             return;
-        parent.lock()->removeChild(this->shared_from_this());
+        this->parent.lock()->removeChild(this->shared_from_this());
     }
 
     iterator begin() {
-        return children.begin();
+        return this->children.begin();
     }
 
     iterator end() {
-        return children.end();
+        return this->children.end();
     }
 
     const_iterator begin() const {
-        return children.begin();
+        return this->children.begin();
     }
 
     const_iterator end() const {
-        return children.end();
+        return this->children.end();
     }
 
     const_iterator cbegin() const {
-        return children.cbegin();
+        return this->children.cbegin();
     }
 
     const_iterator cend() const {
-        return children.cend();
+        return this->children.cend();
     }
 
 protected:
