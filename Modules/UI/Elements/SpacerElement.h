@@ -3,9 +3,9 @@
 #include "UI/UIElement.h"
 
 
-class Spacer : public UIElement {
+class SpacerElement : public UIElement {
 public:
-    Spacer();
+    SpacerElement();
 };
 
 

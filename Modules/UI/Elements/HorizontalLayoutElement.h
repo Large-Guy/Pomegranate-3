@@ -2,9 +2,9 @@
 #define POMEGRANATE_HORIZONTALLAYOUT_H
 #include "UI/UIElement.h"
 
-class HorizontalLayout : public UIElement {
+class HorizontalLayoutElement : public UIElement {
 public:
-    HorizontalLayout();
+    HorizontalLayoutElement();
 };
 
 

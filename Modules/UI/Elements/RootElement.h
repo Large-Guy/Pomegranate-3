@@ -3,9 +3,9 @@
 #include "UI/UIElement.h"
 
 
-class Root : public UIElement {
+class RootElement : public UIElement {
 public:
-    Root();
+    RootElement();
 
     void render(Viewport screen, float scale, const std::shared_ptr<Theme>& theme,
                 const std::weak_ptr<CommandBuffer>& commandBuffer,

@@ -73,3 +73,9 @@ std::shared_ptr<Texture> UICompositor::render(Viewport screen, float scale, cons
 
     return ping;
 }
+
+void UICompositor::pushEvent(Event& event) const {
+    for (auto& layer: layers) {
+        layer->pushEvent(event);
+    }
+}

@@ -307,6 +307,36 @@ struct KeyReleaseEvent : WindowEvent, KeyEvent {
     ScanCode scancode;
 };
 
+struct MouseEvent {
+    enum class Button {
+        Left = 1,
+        Right = 2,
+        Middle = 3,
+    };
+};
+
+struct MouseMoveEvent : MouseEvent {
+    float x, y;
+    float dx, dy;
+};
+
+struct MouseWheelEvent : MouseEvent {
+    float dx;
+    float dy;
+};
+
+struct MousePressEvent : MouseEvent {
+    Button button;
+    float x, y;
+    int clicks;
+};
+
+struct MouseReleaseEvent : MouseEvent {
+    Button button;
+    float x, y;
+    int clicks;
+};
+
 class Event {
 public:
     template<typename T>
@@ -324,7 +354,11 @@ private:
         WindowResizeEvent,
         WindowMoveEvent,
         KeyPressEvent,
-        KeyReleaseEvent
+        KeyReleaseEvent,
+        MouseMoveEvent,
+        MouseWheelEvent,
+        MousePressEvent,
+        MouseReleaseEvent
     >;
 
     EventVariant data;

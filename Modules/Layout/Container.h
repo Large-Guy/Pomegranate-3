@@ -20,7 +20,9 @@ public:
         float width;
         float height;
 
-        bool contains(float x, float y) const;
+        float scale;
+
+        bool contains(float x, float y, bool scale = false) const;
     };
 
     struct Scale {

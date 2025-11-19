@@ -10,11 +10,11 @@
 #include "UI/Theme.h"
 #include "UI/UICompositor.h"
 #include "UI/UILayer.h"
-#include "UI/Elements/BlurPanel.h"
-#include "UI/Elements/HorizontalLayout.h"
-#include "UI/Elements/Panel.h"
-#include "UI/Elements/Root.h"
-#include "UI/Elements/VerticalLayout.h"
+#include "UI/Elements/BlurElement.h"
+#include "UI/Elements/HorizontalLayoutElement.h"
+#include "UI/Elements/PanelElement.h"
+#include "UI/Elements/RootElement.h"
+#include "UI/Elements/VerticalLayoutElement.h"
 
 class MessageApp : public App {
 public:
@@ -29,7 +29,7 @@ public:
 
     std::shared_ptr<Theme> theme;
 
-    std::shared_ptr<Root> root;
+    std::shared_ptr<RootElement> root;
 
     void start() override {
         window = Window::create();
@@ -50,12 +50,12 @@ public:
 
         display = std::make_shared<Display>(renderer, window);
 
-        root = std::make_shared<Root>();
+        root = std::make_shared<RootElement>();
 
         layer1 = std::make_shared<UILayer>(renderer);
 
         //Create a vertical layout
-        auto layout = std::make_shared<VerticalLayout>();
+        auto layout = std::make_shared<VerticalLayoutElement>();
         auto layoutContainer = layout->getContainer();
         layoutContainer->x = {Container::Position::Label::Percent, 0.5f};
         layoutContainer->y = {Container::Position::Label::Percent, 0.5f};
@@ -66,16 +66,16 @@ public:
         layoutContainer->padding = {Container::Scale::Label::Pixel, 8.0f};
         root->addChild(layout);
 
-        auto menuBar = std::make_shared<HorizontalLayout>();
-        auto menuBarPanel = std::make_shared<Panel>();
+        auto menuBar = std::make_shared<HorizontalLayoutElement>();
+        auto menuBarPanel = std::make_shared<PanelElement>();
         menuBar->addChild(menuBarPanel);
         layout->addChild(menuBar);
 
         //Add a couple panel
         for (int i = 0; i < 8; i++) {
-            auto subLayout = std::make_shared<HorizontalLayout>();
+            auto subLayout = std::make_shared<HorizontalLayoutElement>();
             for (int y = 0; y < 9; y++) {
-                auto panel = std::make_shared<Panel>();
+                auto panel = std::make_shared<PanelElement>();
                 if ((i + y) % 2 == 0) {
                     panel->fill = "accent-fill";
                     panel->border = "accent-border";
@@ -92,16 +92,16 @@ public:
 
         layer2 = std::make_shared<UILayer>(renderer);
 
-        auto blurRoot = std::make_shared<Root>();
+        auto blurRoot = std::make_shared<RootElement>();
 
-        auto padding = std::make_shared<Panel>();
+        auto padding = std::make_shared<PanelElement>();
 
         padding->fill = "";
         padding->border = "";
 
         blurRoot->addChild(padding);
 
-        auto blurPanel = std::make_shared<BlurPanel>();
+        auto blurPanel = std::make_shared<BlurElement>();
 
         auto blurContainer = blurPanel->getContainer();
         blurContainer->x = {Container::Position::Label::Percent, 0.5f};

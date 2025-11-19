@@ -4,9 +4,9 @@
 #include "UI/UIElement.h"
 
 
-class Panel : public UIElement {
+class PanelElement : public UIElement {
 public:
-    Panel();
+    PanelElement();
 
     void onAddedToLayer(const std::shared_ptr<Renderer>& renderer) override;
 
@@ -29,7 +29,6 @@ protected:
 
     std::shared_ptr<Pipeline> pipeline;
 
-private:
     static std::shared_ptr<Pipeline> standardPipeline;
 };
 

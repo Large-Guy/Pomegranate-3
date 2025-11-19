@@ -3,6 +3,7 @@
 #include <memory>
 
 #include "UIElement.h"
+#include "Events/Event.h"
 #include "Rendering/Texture.h"
 
 
@@ -13,6 +14,8 @@ public:
     std::shared_ptr<Texture> render(Viewport screen, float scale, const std::shared_ptr<Theme>& theme,
                                     const std::weak_ptr<CommandBuffer>& commandBuffer,
                                     const std::shared_ptr<Texture>& background);
+
+    void pushEvent(Event& event);
 
     void addElement(const std::shared_ptr<UIElement>& element);
 

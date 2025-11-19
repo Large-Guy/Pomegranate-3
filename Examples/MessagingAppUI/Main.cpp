@@ -12,13 +12,14 @@
 #include "UI/Theme.h"
 #include "UI/UICompositor.h"
 #include "UI/UILayer.h"
-#include "UI/Elements/BlurPanel.h"
-#include "UI/Elements/Full.h"
-#include "UI/Elements/HorizontalLayout.h"
-#include "UI/Elements/Panel.h"
-#include "UI/Elements/Root.h"
-#include "UI/Elements/Spacer.h"
-#include "UI/Elements/VerticalLayout.h"
+#include "UI/Elements/BlurElement.h"
+#include "UI/Elements/FullLayoutElement.h"
+#include "UI/Elements/HorizontalLayoutElement.h"
+#include "UI/Elements/PanelElement.h"
+#include "UI/Elements/RootElement.h"
+#include "UI/Elements/SpacerElement.h"
+#include "UI/Elements/InputElement.h"
+#include "UI/Elements/VerticalLayoutElement.h"
 
 class MessageApp : public App {
 public:
@@ -55,51 +56,49 @@ public:
         theme = Theme::dark();
         compositor = std::make_shared<UICompositor>(renderer);
 
-        auto root = std::make_shared<Root>();
+        auto root = std::make_shared<RootElement>();
 
         //Split the screen vertically
-        auto split = std::make_shared<HorizontalLayout>();
+        auto split = std::make_shared<HorizontalLayoutElement>();
         root->addChild(split);
         split->getContainer<Flexable>()->xFill = true;
         split->getContainer<Flexable>()->xOverflow = false;
         split->getContainer<Flexable>()->gap = 0;
 
         //People
-        auto chats = std::make_shared<Panel>();
+        auto chats = std::make_shared<PanelElement>();
         split->addChild(chats);
         chats->getContainer()->width = {Container::Scale::Label::Percent, 0.25f};
 
         //Your messages with the selected chatter
-        auto messages = std::make_shared<Panel>();
+        auto messages = std::make_shared<PanelElement>();
         split->addChild(messages);
         messages->getContainer()->width = {Container::Scale::Label::Percent, 0.75f};
         messages->fill = "secondary-fill";
         messages->border = "secondary-border";
 
-        auto messageSplit = std::make_shared<VerticalLayout>();
+        auto messageSplit = std::make_shared<VerticalLayoutElement>();
         messageSplit->getContainer()->gap = {Container::Scale::Label::Pixel, 0.0f};
         messageSplit->getContainer<Vertical>()->yOverflow = false;
         messages->addChild(messageSplit);
-        auto messageSpacer = std::make_shared<Full>();
+        auto messageSpacer = std::make_shared<FullLayoutElement>();
         messageSplit->addChild(messageSpacer);
 
-        auto messageContents = std::make_shared<VerticalLayout>();
+        auto messageContents = std::make_shared<VerticalLayoutElement>();
         messageSpacer->addChild(messageContents);
 
-        auto messageBox = std::make_shared<Full>();
-        messageBox->getContainer()->height = {Container::Scale::Label::Pixel, 80.0f};
+        auto messageBox = std::make_shared<FullLayoutElement>();
+        messageBox->getContainer()->height = {Container::Scale::Label::Pixel, 64.0f};
 
-        auto messageHorizontalLayout = std::make_shared<HorizontalLayout>();
+        auto messageHorizontalLayout = std::make_shared<HorizontalLayoutElement>();
         messageBox->addChild(messageHorizontalLayout);
-        auto textInput = std::make_shared<Panel>();
+        auto textInput = std::make_shared<InputElement>();
         messageHorizontalLayout->addChild(textInput);
-        textInput->fill = "neutral-fill";
-        textInput->border = "neutral-border";
 
-        auto send = std::make_shared<Panel>();
+        auto send = std::make_shared<PanelElement>();
         messageHorizontalLayout->addChild(send);
-        send->getContainer()->width = {Container::Scale::Label::Pixel, 64.0f};
-        send->getContainer()->height = {Container::Scale::Label::Pixel, 64.0f};
+        send->getContainer()->width = {Container::Scale::Label::Pixel, 48.0f};
+        send->getContainer()->height = {Container::Scale::Label::Pixel, 48.0f};
         send->fill = "accent-fill";
         send->border = "accent-border";
 
@@ -121,6 +120,7 @@ public:
         //region event handling
         Event event;
         while (Event::getEvent(event)) {
+            compositor->pushEvent(event);
             if (auto* close = event.as<WindowCloseEvent>()) {
                 quit();
             }

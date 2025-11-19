@@ -69,6 +69,33 @@ bool Event::getEvent(Event& e) {
             e.data = releaseEvent;
             break;
         }
+        case SDL_EVENT_MOUSE_MOTION: {
+            MouseMoveEvent moveEvent;
+            moveEvent.x = event.motion.x;
+            moveEvent.y = event.motion.y;
+            moveEvent.dx = event.motion.xrel;
+            moveEvent.dy = event.motion.yrel;
+            e.data = moveEvent;
+            break;
+        }
+        case SDL_EVENT_MOUSE_BUTTON_DOWN: {
+            MousePressEvent pressEvent;
+            pressEvent.button = static_cast<MouseEvent::Button>(event.button.button);
+            pressEvent.x = event.button.x;
+            pressEvent.y = event.button.y;
+            pressEvent.clicks = event.button.clicks;
+            e.data = pressEvent;
+            break;
+        }
+        case SDL_EVENT_MOUSE_BUTTON_UP: {
+            MouseReleaseEvent releaseEvent;
+            releaseEvent.button = static_cast<MouseEvent::Button>(event.button.button);
+            releaseEvent.x = event.button.x;
+            releaseEvent.y = event.button.y;
+            releaseEvent.clicks = event.button.clicks;
+            e.data = releaseEvent;
+            break;
+        }
         default: break;
     }
 

@@ -1,9 +1,9 @@
 #ifndef POMEGRANATE_BLURPANEL_H
 #define POMEGRANATE_BLURPANEL_H
-#include "Panel.h"
+#include "PanelElement.h"
 
 
-class BlurPanel : public Panel {
+class BlurElement : public PanelElement {
 public:
     void onAddedToLayer(const std::shared_ptr<Renderer>& renderer) override;
 

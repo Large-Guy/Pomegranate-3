@@ -18,6 +18,8 @@ public:
     std::shared_ptr<Texture> render(Viewport screen, float scale, const std::shared_ptr<Theme>& theme,
                                     const std::weak_ptr<CommandBuffer>& commandBuffer);
 
+    void pushEvent(Event& event) const;
+
 private:
     std::shared_ptr<Renderer> renderer;
 

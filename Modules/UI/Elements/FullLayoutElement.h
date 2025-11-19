@@ -3,9 +3,9 @@
 #include "UI/UIElement.h"
 
 
-class Full : public UIElement {
+class FullLayoutElement : public UIElement {
 public:
-    Full();
+    FullLayoutElement();
 };
 
 

@@ -3,9 +3,9 @@
 #include "UI/UIElement.h"
 
 
-class VerticalLayout : public UIElement {
+class VerticalLayoutElement : public UIElement {
 public:
-    VerticalLayout();
+    VerticalLayoutElement();
 };
 
 

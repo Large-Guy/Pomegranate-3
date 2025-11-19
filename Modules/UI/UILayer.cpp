@@ -32,6 +32,23 @@ std::shared_ptr<Texture> UILayer::render(Viewport screen, float scale, const std
     return texture;
 }
 
+static bool propagateEvents(const std::shared_ptr<UIElement>& element, Event& event) {
+    for (auto& child: *element) {
+        if (propagateEvents(child, event))
+            return true;
+    }
+    element->standardEventHandler(event);
+    auto eventResult = element->onEvent(event);
+    return eventResult == UIElement::EventResult::Consumed;
+}
+
+void UILayer::pushEvent(Event& event) {
+    for (const auto& element: elements) {
+        if (propagateEvents(element, event))
+            return;
+    }
+}
+
 static void recurseElementAdded(const std::shared_ptr<Renderer>& renderer, const std::shared_ptr<UIElement>& element) {
     element->onAddedToLayer(renderer);
     for (const auto& child: *element) {
@@ -65,8 +82,8 @@ void UILayer::drawElements(Viewport screen, float scale, const std::shared_ptr<T
                            const std::shared_ptr<Texture>& background, const std::shared_ptr<UIElement>& element) {
     if (const auto parent = element->getParent<UIElement>()) {
         const auto container = parent->getContainer();
-        auto [x, y, width, height] = container->real();
-        drawPass->scissor(x, y, width, height);
+        auto rect = container->real();
+        drawPass->scissor(rect.x, rect.y, rect.width, rect.height);
     }
     element->render(screen, scale, theme, commandBuffer, drawPass, background);
     for (const auto& child: *element) {

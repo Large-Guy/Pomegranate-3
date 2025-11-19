@@ -2,7 +2,11 @@
 
 #include <iostream>
 
-bool Container::Output::contains(float x, float y) const {
+bool Container::Output::contains(float x, float y, bool scale) const {
+    if (scale) {
+        x *= this->scale;
+        y *= this->scale;
+    }
     return this->x <= x && x <= this->x + width && this->y <= y && y <= this->y + height;
 }
 
@@ -98,7 +102,7 @@ void Container::computeRect(float scale) {
 
 void Container::compute(float scale) {
     if (getParent() == nullptr) {
-        rect = {x.value, y.value, width.value, height.value};
+        rect = {x.value, y.value, width.value, height.value, scale};
     }
 
     this->rect.x -= this->xPivot.real(0, rect.width, scale);
@@ -109,6 +113,8 @@ void Container::compute(float scale) {
     for (auto& child: *this) {
         child->compute(scale);
     }
+
+    rect.scale = scale;
 }
 
 Container::Output Container::real() const {

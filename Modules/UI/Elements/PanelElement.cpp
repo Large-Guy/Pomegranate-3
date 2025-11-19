@@ -1,16 +1,16 @@
-#include "Panel.h"
+#include "PanelElement.h"
 
 #include <iostream>
 
 #include "UI/Theme.h"
 
-std::shared_ptr<Pipeline> Panel::standardPipeline = nullptr;
+std::shared_ptr<Pipeline> PanelElement::standardPipeline = nullptr;
 
-Panel::Panel() : UIElement(std::make_shared<Container>()) {
+PanelElement::PanelElement() : UIElement(std::make_shared<Container>()) {
     auto container = getContainer();
 }
 
-void Panel::onAddedToLayer(const std::shared_ptr<Renderer>& renderer) {
+void PanelElement::onAddedToLayer(const std::shared_ptr<Renderer>& renderer) {
     if (standardPipeline == nullptr) {
         auto vertex = std::make_shared<Shader>(renderer, Shader::Type::Vertex, "Resources/Panel.hlsl", 0, 1, 0, 0);
         auto fragment = std::make_shared<Shader>(renderer, Shader::Type::Fragment, "Resources/Panel.hlsl", 0, 1, 0, 0);
@@ -26,10 +26,10 @@ void Panel::onAddedToLayer(const std::shared_ptr<Renderer>& renderer) {
     pipeline = standardPipeline;
 }
 
-void Panel::render(Viewport screen, float scale, const std::shared_ptr<Theme>& theme,
-                   const std::weak_ptr<CommandBuffer>& commandBuffer,
-                   const std::shared_ptr<DrawPass>& drawPass,
-                   const std::shared_ptr<Texture>& background) {
+void PanelElement::render(Viewport screen, float scale, const std::shared_ptr<Theme>& theme,
+                          const std::weak_ptr<CommandBuffer>& commandBuffer,
+                          const std::shared_ptr<DrawPass>& drawPass,
+                          const std::shared_ptr<Texture>& background) {
     auto fillColor = theme->get<Color>(fill);
     auto borderColor = theme->get<Color>(border);
     auto containerRect = getContainer()->real();

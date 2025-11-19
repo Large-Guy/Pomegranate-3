@@ -21,6 +21,10 @@ set(UISrc
         Elements/Spacer.h
         Elements/Full.cpp
         Elements/Full.h
+        Elements/TextInput.cpp
+        Elements/TextInput.h
+        Elements/Text.cpp
+        Elements/Text.h
 )
 
 add_library(UI STATIC
