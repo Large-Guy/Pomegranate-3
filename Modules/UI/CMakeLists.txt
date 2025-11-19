@@ -5,26 +5,26 @@ set(UISrc
         UILayer.h
         UICompositor.cpp
         UICompositor.h
-        Elements/Panel.cpp
-        Elements/Panel.h
-        Elements/VerticalLayout.cpp
-        Elements/VerticalLayout.h
-        Elements/HorizontalLayout.cpp
-        Elements/HorizontalLayout.h
+        Elements/PanelElement.cpp
+        Elements/PanelElement.h
+        Elements/VerticalLayoutElement.cpp
+        Elements/VerticalLayoutElement.h
+        Elements/HorizontalLayoutElement.cpp
+        Elements/HorizontalLayoutElement.h
         Theme.cpp
         Theme.h
-        Elements/Root.cpp
-        Elements/Root.h
-        Elements/BlurPanel.cpp
-        Elements/BlurPanel.h
-        Elements/Spacer.cpp
-        Elements/Spacer.h
-        Elements/Full.cpp
-        Elements/Full.h
-        Elements/TextInput.cpp
-        Elements/TextInput.h
-        Elements/Text.cpp
-        Elements/Text.h
+        Elements/RootElement.cpp
+        Elements/RootElement.h
+        Elements/BlurElement.cpp
+        Elements/BlurElement.h
+        Elements/SpacerElement.cpp
+        Elements/SpacerElement.h
+        Elements/FullLayoutElement.cpp
+        Elements/FullLayoutElement.h
+        Elements/InputElement.cpp
+        Elements/InputElement.h
+        Elements/TextElement.cpp
+        Elements/TextElement.h
 )
 
 add_library(UI STATIC

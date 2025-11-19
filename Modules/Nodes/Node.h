@@ -103,6 +103,40 @@ public:
     }
 
 protected:
+    void addPrivateChild(const std::shared_ptr<T>& node) {
+        this->privateChildren.push_back(node);
+        std::dynamic_pointer_cast<Node>(node)->parent = this->shared_from_this();
+        node->onAdded(std::dynamic_pointer_cast<T>(this->shared_from_this()));
+        this->onChildAdded(node);
+    }
+
+    void removePrivateChild(const std::shared_ptr<T>& node) {
+        this->onChildRemoved(node);
+        node->onRemoved(std::dynamic_pointer_cast<T>(this->shared_from_this()));
+        std::erase(this->privateChildren, node);
+        std::dynamic_pointer_cast<Node>(node)->parent.reset();
+    }
+
+    void removePrivateChildAt(size_t index) {
+        this->onChildRemoved(this->privateChildren[index]);
+        privateChildren[index]->onRemoved(this->shared_from_this());
+        std::dynamic_pointer_cast<Node>(privateChildren[index])->parent.reset();
+        privateChildren.erase(this->privateChildren.begin() + index);
+    }
+
+    size_t getPrivateChildCount() const {
+        return this->privateChildren.size();
+    }
+
+    std::shared_ptr<T> getPrivateChild(size_t index) {
+        return this->privateChildren[index];
+    }
+
+    template<typename S>
+    std::shared_ptr<S> getPrivateChild(size_t index) {
+        return std::dynamic_pointer_cast<S>(this->getPrivateChild(index));
+    }
+
     virtual void onAdded(const std::shared_ptr<T>& node) {
     }
 
@@ -118,6 +152,7 @@ protected:
 private:
     std::weak_ptr<T> parent;
     std::vector<std::shared_ptr<T> > children = {};
+    std::vector<std::shared_ptr<T> > privateChildren = {};
 };
 
 
