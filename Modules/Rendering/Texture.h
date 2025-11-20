@@ -24,11 +24,15 @@ public:
 
     void download(const std::shared_ptr<struct CopyPass>& renderPass, const std::shared_ptr<TransferBuffer>& output);
 
+    void upload(const std::shared_ptr<struct CopyPass>& renderPass, const std::shared_ptr<TransferBuffer>& input);
+
     int width() const;
 
     int height() const;
 
     void* getInternal() const;
+
+    static std::shared_ptr<Texture> load(const std::shared_ptr<Renderer>& renderer, const std::string& path);
 
 private:
     std::shared_ptr<Renderer> renderer;

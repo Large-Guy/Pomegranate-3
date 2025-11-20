@@ -7,7 +7,7 @@
 #include "Nodes/Node.h"
 
 
-class Container : public Node<Container>, public Reflective {
+class Container : public TreeNode<Container>, public Reflective {
 public:
     virtual ~Container() = default;
 

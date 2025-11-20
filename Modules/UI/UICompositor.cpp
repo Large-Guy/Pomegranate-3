@@ -8,8 +8,10 @@ UICompositor::UICompositor(const std::shared_ptr<Renderer>& renderer) {
 
     //Load/create composite shader pipeline
 
-    auto vertex = std::make_shared<Shader>(renderer, Shader::Type::Vertex, "Resources/Compositor.hlsl", 0, 0, 0, 0);
-    auto fragment = std::make_shared<Shader>(renderer, Shader::Type::Fragment, "Resources/Compositor.hlsl", 2, 0, 0, 0);
+    auto vertex = std::make_shared<Shader>(renderer, Shader::Type::Vertex, "Resources/Shaders/Compositor.hlsl", 0, 0, 0,
+                                           0);
+    auto fragment = std::make_shared<Shader>(renderer, Shader::Type::Fragment, "Resources/Shaders/Compositor.hlsl", 2, 0,
+                                             0, 0);
 
     this->pipeline = std::make_shared<Pipeline>(renderer, Texture::Format::R8G8B8A8_SRGB);
     this->pipeline->vertex(vertex, {});

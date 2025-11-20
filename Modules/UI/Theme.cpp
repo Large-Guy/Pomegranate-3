@@ -16,6 +16,6 @@ std::shared_ptr<Theme> Theme::dark() {
     theme->set("neutral-border", Color{0.380f, 0.380f, 0.365f});
 
     theme->set("accent-fill", Color{0.666f, 0.325f, 0.180f});
-    theme->set("accent-border", Color{0.612f, 0.353f, 0.235f});
+    theme->set("accent-border", Color{0.666f, 0.325f, 0.180f});
     return theme;
 }

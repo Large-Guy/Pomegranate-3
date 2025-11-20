@@ -94,6 +94,6 @@ void setBorderlessWithTrafficLights(SDL_Window* window) {
         [nativeWindow setStyleMask:currentStyle | NSFullSizeContentViewWindowMask | NSWindowTitleHidden];
         [nativeWindow setTitlebarAppearsTransparent:YES];
         // Allows the window background to be used for dragging
-        [nativeWindow setMovableByWindowBackground:YES]; 
+        //[nativeWindow setMovableByWindowBackground:YES]; 
     }
 }

@@ -4,6 +4,7 @@
 #include "RenderPass.h"
 
 #include "SDL3/SDL_gpu.h"
+#include "SDL3_image/SDL_image.h"
 
 Texture::Texture(const std::shared_ptr<Renderer>& renderer, Format format, int width, int height, int layers,
                  BitFlag<Flags> flags) {
@@ -48,6 +49,18 @@ void Texture::download(const std::shared_ptr<CopyPass>& pass, const std::shared_
     SDL_DownloadFromGPUTexture(static_cast<SDL_GPUCopyPass*>(pass->getInternal()), &source, &destination);
 }
 
+void Texture::upload(const std::shared_ptr<class CopyPass>& renderPass, const std::shared_ptr<TransferBuffer>& input) {
+    SDL_GPUTextureTransferInfo source{};
+    source.transfer_buffer = static_cast<SDL_GPUTransferBuffer*>(input->getInternal());
+
+    SDL_GPUTextureRegion destination{};
+    destination.texture = texture;
+    destination.w = textureWidth;
+    destination.h = textureHeight;
+    destination.d = 1;
+    SDL_UploadToGPUTexture(static_cast<SDL_GPUCopyPass*>(renderPass->getInternal()), &source, &destination, false);
+}
+
 int Texture::width() const {
     return textureWidth;
 }
@@ -57,5 +70,31 @@ int Texture::height() const {
 }
 
 void* Texture::getInternal() const {
+    return texture;
+}
+
+std::shared_ptr<Texture> Texture::load(const std::shared_ptr<Renderer>& renderer, const std::string& path) {
+    SDL_Surface* surface = IMG_Load(path.c_str());
+    auto texture = std::make_shared<Texture>(renderer, Format::R8G8B8A8_SRGB, surface->w, surface->h, 1,
+                                             BitFlag<Flags>());
+    size_t size = surface->h * surface->pitch;
+    auto transferBuffer = std::make_shared<TransferBuffer>(renderer, TransferBuffer::Type::Upload,
+                                                           size);
+
+    auto* mapped = transferBuffer->map<uint8_t>();
+    std::memcpy(mapped, surface->pixels, size);
+    transferBuffer->unmap();
+
+    auto cmdQueue = renderer->begin();
+    auto copy = std::make_shared<CopyPass>(renderer);
+    copy->begin(cmdQueue);
+
+    texture->upload(copy, transferBuffer);
+
+    copy->end();
+
+    renderer->end();
+
+    SDL_DestroySurface(surface);
     return texture;
 }

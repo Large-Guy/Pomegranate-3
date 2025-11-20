@@ -10,7 +10,7 @@
 #include "Rendering/DrawPass.h"
 
 
-class UIElement : public Node<UIElement> {
+class UIElement : public TreeNode<UIElement> {
 public:
     static std::weak_ptr<UIElement> focused;
 

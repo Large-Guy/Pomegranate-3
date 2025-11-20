@@ -25,6 +25,10 @@ set(UISrc
         Elements/InputElement.h
         Elements/TextElement.cpp
         Elements/TextElement.h
+        Elements/ImageElement.cpp
+        Elements/ImageElement.h
+        Elements/ButtonElement.cpp
+        Elements/ButtonElement.h
 )
 
 add_library(UI STATIC

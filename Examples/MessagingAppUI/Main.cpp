@@ -2,6 +2,7 @@
 
 #include "Events/Event.h"
 #include "Framework/App.h"
+#include "Layout/Fill.h"
 #include "Layout/Flexable.h"
 #include "Layout/Vertical.h"
 #include "Platform/Window.h"
@@ -13,8 +14,10 @@
 #include "UI/UICompositor.h"
 #include "UI/UILayer.h"
 #include "UI/Elements/BlurElement.h"
+#include "UI/Elements/ButtonElement.h"
 #include "UI/Elements/FullLayoutElement.h"
 #include "UI/Elements/HorizontalLayoutElement.h"
+#include "UI/Elements/ImageElement.h"
 #include "UI/Elements/PanelElement.h"
 #include "UI/Elements/RootElement.h"
 #include "UI/Elements/SpacerElement.h"
@@ -34,7 +37,7 @@ public:
 
     void initRendering() {
         window = Window::create();
-        window->setTitle("UI Example");
+        window->setTitle("Messaging App");
         window->setSize(1024, 720);
 
         window->open();
@@ -43,6 +46,7 @@ public:
         window->setFlag(Window::Resizable, true);
         window->setFlag(Window::Transparent, true);
         window->setFlag(Window::Blur, true);
+        window->setFlag(Window::Full, true);
         window->setFlag(Window::HighDPI, true);
 
         renderer = std::make_shared<Renderer>();
@@ -66,14 +70,14 @@ public:
         split->getContainer<Flexable>()->gap = 0;
 
         //People
-        auto chats = std::make_shared<PanelElement>();
-        split->addChild(chats);
-        chats->getContainer()->width = {Container::Scale::Label::Percent, 0.25f};
+        auto contacts = std::make_shared<PanelElement>();
+        split->addChild(contacts);
+        contacts->getContainer()->width = {Container::Scale::Label::Pixel, 256.0f};
 
         //Your messages with the selected chatter
         auto messages = std::make_shared<PanelElement>();
         split->addChild(messages);
-        messages->getContainer()->width = {Container::Scale::Label::Percent, 0.75f};
+        messages->getContainer()->width = {Container::Scale::Label::Auto, 0.0f};
         messages->fill = "secondary-fill";
         messages->border = "secondary-border";
 
@@ -87,20 +91,38 @@ public:
         auto messageContents = std::make_shared<VerticalLayoutElement>();
         messageSpacer->addChild(messageContents);
 
+        //Add some text
+        auto text = std::make_shared<TextElement>();
+        messageContents->addChild(text);
+
         auto messageBox = std::make_shared<FullLayoutElement>();
         messageBox->getContainer()->height = {Container::Scale::Label::Pixel, 64.0f};
 
         auto messageHorizontalLayout = std::make_shared<HorizontalLayoutElement>();
         messageBox->addChild(messageHorizontalLayout);
+
         auto textInput = std::make_shared<InputElement>();
         messageHorizontalLayout->addChild(textInput);
 
-        auto send = std::make_shared<PanelElement>();
+        auto send = std::make_shared<ButtonElement>();
         messageHorizontalLayout->addChild(send);
         send->getContainer()->width = {Container::Scale::Label::Pixel, 48.0f};
         send->getContainer()->height = {Container::Scale::Label::Pixel, 48.0f};
         send->fill = "accent-fill";
         send->border = "accent-border";
+        send->onPress += [] {
+            std::cout << "Button pressed! Message sent!" << std::endl;
+        };
+
+        auto icon = std::make_shared<ImageElement>();
+        send->addChild(icon);
+        icon->image = Texture::load(renderer, "Resources/Images/Send.png");
+        icon->getContainer()->x = {Container::Position::Label::Percent, 0.5f};
+        icon->getContainer()->y = {Container::Position::Label::Percent, 0.5f};
+        icon->getContainer()->xPivot = {Container::Position::Label::Percent, 0.5f};
+        icon->getContainer()->yPivot = {Container::Position::Label::Percent, 0.5f};
+        icon->getContainer()->width = {Container::Scale::Label::Pixel, 48.0f};
+        icon->getContainer()->height = {Container::Scale::Label::Pixel, 48.0f};
 
         messageSplit->addChild(messageBox);
 

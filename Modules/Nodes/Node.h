@@ -3,20 +3,22 @@
 #include <memory>
 #include <vector>
 
+class Node {
+};
 
 template<typename T>
-class Node : public std::enable_shared_from_this<T> {
+class TreeNode : public Node, public std::enable_shared_from_this<T> {
 public:
     using iterator = std::vector<std::shared_ptr<T> >::iterator;
     using const_iterator = std::vector<std::shared_ptr<T> >::const_iterator;
 
-    Node() = default;
+    TreeNode() = default;
 
-    virtual ~Node() = default;
+    virtual ~TreeNode() = default;
 
     void addChild(const std::shared_ptr<T>& node) {
         this->children.push_back(node);
-        std::dynamic_pointer_cast<Node>(node)->parent = this->shared_from_this();
+        std::dynamic_pointer_cast<TreeNode>(node)->parent = this->shared_from_this();
         node->onAdded(std::dynamic_pointer_cast<T>(this->shared_from_this()));
         this->onChildAdded(node);
     }
@@ -25,13 +27,13 @@ public:
         this->onChildRemoved(node);
         node->onRemoved(std::dynamic_pointer_cast<T>(this->shared_from_this()));
         std::erase(this->children, node);
-        std::dynamic_pointer_cast<Node>(node)->parent.reset();
+        std::dynamic_pointer_cast<TreeNode>(node)->parent.reset();
     }
 
     void removeChildAt(size_t index) {
         this->onChildRemoved(this->children[index]);
         children[index]->onRemoved(this->shared_from_this());
-        std::dynamic_pointer_cast<Node>(children[index])->parent.reset();
+        std::dynamic_pointer_cast<TreeNode>(children[index])->parent.reset();
         children.erase(this->children.begin() + index);
     }
 
@@ -105,7 +107,7 @@ public:
 protected:
     void addPrivateChild(const std::shared_ptr<T>& node) {
         this->privateChildren.push_back(node);
-        std::dynamic_pointer_cast<Node>(node)->parent = this->shared_from_this();
+        std::dynamic_pointer_cast<TreeNode>(node)->parent = this->shared_from_this();
         node->onAdded(std::dynamic_pointer_cast<T>(this->shared_from_this()));
         this->onChildAdded(node);
     }
@@ -114,13 +116,13 @@ protected:
         this->onChildRemoved(node);
         node->onRemoved(std::dynamic_pointer_cast<T>(this->shared_from_this()));
         std::erase(this->privateChildren, node);
-        std::dynamic_pointer_cast<Node>(node)->parent.reset();
+        std::dynamic_pointer_cast<TreeNode>(node)->parent.reset();
     }
 
     void removePrivateChildAt(size_t index) {
         this->onChildRemoved(this->privateChildren[index]);
         privateChildren[index]->onRemoved(this->shared_from_this());
-        std::dynamic_pointer_cast<Node>(privateChildren[index])->parent.reset();
+        std::dynamic_pointer_cast<TreeNode>(privateChildren[index])->parent.reset();
         privateChildren.erase(this->privateChildren.begin() + index);
     }
 
