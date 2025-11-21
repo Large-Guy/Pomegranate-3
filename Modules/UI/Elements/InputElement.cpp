@@ -7,10 +7,10 @@ InputElement::InputElement() {
     this->border = "neutral-border";
 
     auto container = getContainer();
-    auto fill = std::make_shared<Fill>();
+    auto fill = Fill::make();
     container->addChild(fill);
     fill->padding = {Container::Scale::Label::Pixel, 8.0f};
-    textContainer = std::make_shared<Container>();
+    textContainer = Container::make();
     fill->addChild(textContainer);
 }
 
@@ -36,4 +36,8 @@ void InputElement::render(Viewport screen, float scale, const std::shared_ptr<Th
     this->pipeline->uniform(Shader::Type::Fragment, 0, uniform);
 
     drawPass->drawPrimitives(6, 0, 1, 0);
+}
+
+std::shared_ptr<InputElement> InputElement::make() {
+    return std::shared_ptr<InputElement>(new InputElement());
 }

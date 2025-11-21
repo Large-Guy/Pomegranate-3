@@ -32,7 +32,7 @@ public:
     std::shared_ptr<RootElement> root;
 
     void start() override {
-        window = Window::create();
+        window = Window::make();
         window->setTitle("UI Example");
         window->setSize(1024, 720);
 

@@ -3,7 +3,11 @@
 #include "Layout/Horizontal.h"
 
 
-HorizontalLayoutElement::HorizontalLayoutElement() : UIElement(std::make_shared<Horizontal>()) {
+std::shared_ptr<HorizontalLayoutElement> HorizontalLayoutElement::make() {
+    return std::shared_ptr<HorizontalLayoutElement>(new HorizontalLayoutElement());
+}
+
+HorizontalLayoutElement::HorizontalLayoutElement() : UIElement(Horizontal::make()) {
     auto container = std::dynamic_pointer_cast<Horizontal>(getContainer());
     container->gap = {Container::Scale::Label::Pixel, 8.0f};
 }

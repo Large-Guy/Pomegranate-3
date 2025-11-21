@@ -4,12 +4,19 @@
 
 class Renderer : public std::enable_shared_from_this<Renderer> {
 public:
-    Renderer();
     std::weak_ptr<CommandBuffer> begin();
+
     void end();
+
     std::weak_ptr<CommandBuffer> getCommandQueue();
+
     void* getInternal() const;
+
+    static std::shared_ptr<Renderer> make();
+
 private:
+    Renderer();
+
     struct SDL_GPUDevice* device;
     std::shared_ptr<CommandBuffer> currentCommandQueue;
 };

@@ -7,15 +7,19 @@
 
 class Display {
 public:
-    explicit Display(const std::shared_ptr<Renderer>& renderer, const std::shared_ptr<Window>& window);
-
     ~Display();
 
     void target(const std::weak_ptr<CommandBuffer>& queue, const std::shared_ptr<Texture>& renderTexture);
 
     void present();
 
+    static std::shared_ptr<Display> make(const std::shared_ptr<Renderer>& renderer,
+                                         const std::shared_ptr<Window>& window);
+
 private:
+    Display(const std::shared_ptr<Renderer>& renderer, const std::shared_ptr<Window>& window);
+
+
     std::shared_ptr<Window> window;
     std::shared_ptr<Renderer> renderer;
     std::shared_ptr<Texture> toDisplay;

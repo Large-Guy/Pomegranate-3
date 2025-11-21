@@ -6,19 +6,23 @@
 
 std::shared_ptr<Pipeline> PanelElement::standardPipeline = nullptr;
 
-PanelElement::PanelElement() : UIElement(std::make_shared<Container>()) {
+std::shared_ptr<PanelElement> PanelElement::make() {
+    return std::shared_ptr<PanelElement>(new PanelElement());
+}
+
+PanelElement::PanelElement() : UIElement(Container::make()) {
     auto container = getContainer();
 }
 
 void PanelElement::onAddedToLayer(const std::shared_ptr<Renderer>& renderer) {
     if (standardPipeline == nullptr) {
-        auto vertex = std::make_shared<Shader>(renderer, Shader::Type::Vertex, "Resources/Shaders/Panel.hlsl", 0,
-                                               1, 0, 0);
-        auto fragment = std::make_shared<Shader>(renderer, Shader::Type::Fragment, "Resources/Shaders/Panel.hlsl", 0,
-                                                 1,
-                                                 0, 0);
+        auto vertex = Shader::make(renderer, Shader::Type::Vertex, "Resources/Shaders/Panel.hlsl", 0,
+                                   1, 0, 0);
+        auto fragment = Shader::make(renderer, Shader::Type::Fragment, "Resources/Shaders/Panel.hlsl", 0,
+                                     1,
+                                     0, 0);
 
-        standardPipeline = std::make_shared<Pipeline>(renderer, Texture::Format::R8G8B8A8_SRGB);
+        standardPipeline = Pipeline::make(renderer);
         standardPipeline->vertex(vertex, {});
         standardPipeline->fragment(fragment);
         standardPipeline->primitive(Pipeline::PrimitiveType::TriangleList);

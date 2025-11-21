@@ -73,20 +73,25 @@ void* Texture::getInternal() const {
     return texture;
 }
 
+std::shared_ptr<Texture> Texture::make(const std::shared_ptr<Renderer>& renderer, Format format, int width, int height,
+                                       int layers, BitFlag<Flags> flags) {
+    return std::shared_ptr<Texture>(new Texture(renderer, format, width, height, layers, flags));
+}
+
 std::shared_ptr<Texture> Texture::load(const std::shared_ptr<Renderer>& renderer, const std::string& path) {
     SDL_Surface* surface = IMG_Load(path.c_str());
-    auto texture = std::make_shared<Texture>(renderer, Format::R8G8B8A8_SRGB, surface->w, surface->h, 1,
-                                             BitFlag<Flags>());
+    auto texture = make(renderer, Format::R8G8B8A8_SRGB, surface->w, surface->h, 1,
+                        BitFlag<Flags>());
     size_t size = surface->h * surface->pitch;
-    auto transferBuffer = std::make_shared<TransferBuffer>(renderer, TransferBuffer::Type::Upload,
-                                                           size);
+    auto transferBuffer = TransferBuffer::make(renderer, TransferBuffer::Type::Upload,
+                                               size);
 
     auto* mapped = transferBuffer->map<uint8_t>();
     std::memcpy(mapped, surface->pixels, size);
     transferBuffer->unmap();
 
     auto cmdQueue = renderer->begin();
-    auto copy = std::make_shared<CopyPass>(renderer);
+    auto copy = CopyPass::make(renderer);
     copy->begin(cmdQueue);
 
     texture->upload(copy, transferBuffer);

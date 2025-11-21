@@ -18,11 +18,14 @@ public:
         Mirrored
     };
 
-    Sampler(const std::shared_ptr<Renderer>& renderer, Filter filter, Wrap wrap);
-
     void* getInternal();
 
+    static std::shared_ptr<Sampler> make(const std::shared_ptr<Renderer>& renderer, Filter filter = Filter::Linear,
+                                         Wrap wrap = Wrap::Repeat);
+
 private:
+    Sampler(const std::shared_ptr<Renderer>& renderer, Filter filter, Wrap wrap);
+
     std::shared_ptr<Renderer> renderer;
     struct SDL_GPUSampler* sampler;
     Filter filter;

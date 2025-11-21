@@ -2,19 +2,19 @@
 
 std::shared_ptr<Pipeline> ImageElement::standardPipeline = nullptr;
 
-ImageElement::ImageElement() : UIElement(std::make_shared<Container>()) {
+ImageElement::ImageElement() : UIElement(Container::make()) {
 }
 
 void ImageElement::onAddedToLayer(const std::shared_ptr<Renderer>& renderer) {
     if (standardPipeline == nullptr) {
-        auto vertex = std::make_shared<Shader>(renderer, Shader::Type::Vertex, "Resources/Shaders///Texture.hlsl", 0,
-                                               1, 0, 0);
-        auto fragment = std::make_shared<Shader>(renderer, Shader::Type::Fragment, "Resources/Shaders///Texture.hlsl",
-                                                 1,
-                                                 1,
-                                                 0, 0);
+        auto vertex = Shader::make(renderer, Shader::Type::Vertex, "Resources/Shaders///Texture.hlsl", 0,
+                                   1, 0, 0);
+        auto fragment = Shader::make(renderer, Shader::Type::Fragment, "Resources/Shaders///Texture.hlsl",
+                                     1,
+                                     1,
+                                     0, 0);
 
-        standardPipeline = std::make_shared<Pipeline>(renderer, Texture::Format::R8G8B8A8_SRGB);
+        standardPipeline = Pipeline::make(renderer);
         standardPipeline->vertex(vertex, {});
         standardPipeline->fragment(fragment);
         standardPipeline->primitive(Pipeline::PrimitiveType::TriangleList);
@@ -23,7 +23,7 @@ void ImageElement::onAddedToLayer(const std::shared_ptr<Renderer>& renderer) {
     }
 
     pipeline = standardPipeline;
-    sampler = std::make_shared<Sampler>(renderer, Sampler::Filter::Linear, Sampler::Wrap::Clamp);
+    sampler = Sampler::make(renderer, Sampler::Filter::Linear, Sampler::Wrap::Clamp);
 }
 
 void ImageElement::render(Viewport screen, float scale, const std::shared_ptr<Theme>& theme,
@@ -43,4 +43,8 @@ void ImageElement::render(Viewport screen, float scale, const std::shared_ptr<Th
     this->pipeline->uniform(Shader::Type::Fragment, 0, uniform);
 
     drawPass->drawPrimitives(6, 0, 1, 0);
+}
+
+std::shared_ptr<ImageElement> ImageElement::make() {
+    return std::shared_ptr<ImageElement>(new ImageElement());
 }

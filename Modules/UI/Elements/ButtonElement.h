@@ -10,8 +10,6 @@ public:
     Signal<> onPress;
     Signal<> onRelease;
 
-    ButtonElement();
-
     void onPressed(MouseEvent::Button button) override;
 
     void onReleased(MouseEvent::Button button) override;
@@ -19,6 +17,11 @@ public:
     void render(Viewport screen, float scale, const std::shared_ptr<Theme>& theme,
                 const std::weak_ptr<CommandBuffer>& commandBuffer, const std::shared_ptr<DrawPass>& drawPass,
                 const std::shared_ptr<Texture>& background) override;
+
+    static std::shared_ptr<ButtonElement> make();
+
+protected:
+    ButtonElement();
 };
 
 

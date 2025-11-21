@@ -5,6 +5,9 @@
 
 class SpacerElement : public UIElement {
 public:
+    static std::shared_ptr<SpacerElement> make();
+
+protected:
     SpacerElement();
 };
 

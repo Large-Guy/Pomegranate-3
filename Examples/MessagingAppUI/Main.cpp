@@ -36,7 +36,7 @@ public:
     std::shared_ptr<Theme> theme;
 
     void initRendering() {
-        window = Window::create();
+        window = Window::make();
         window->setTitle("Messaging App");
         window->setSize(1024, 720);
 
@@ -49,62 +49,62 @@ public:
         window->setFlag(Window::Full, true);
         window->setFlag(Window::HighDPI, true);
 
-        renderer = std::make_shared<Renderer>();
-        target = std::make_shared<Texture>(renderer, Texture::Format::R8G8B8A8_SRGB, 1024, 720, 1,
-                                           BitFlag<Texture::Flags>({Texture::Flags::RenderTarget}));
+        renderer = Renderer::make();
+        target = Texture::make(renderer, Texture::Format::R8G8B8A8_SRGB, 1024, 720, 1,
+                               BitFlag<Texture::Flags>({Texture::Flags::RenderTarget}));
 
-        display = std::make_shared<Display>(renderer, window);
+        display = Display::make(renderer, window);
     }
 
     void buildUI() {
         theme = Theme::dark();
-        compositor = std::make_shared<UICompositor>(renderer);
+        compositor = UICompositor::make(renderer);
 
-        auto root = std::make_shared<RootElement>();
+        auto root = RootElement::make();
 
         //Split the screen vertically
-        auto split = std::make_shared<HorizontalLayoutElement>();
+        auto split = HorizontalLayoutElement::make();
         root->addChild(split);
         split->getContainer<Flexable>()->xFill = true;
         split->getContainer<Flexable>()->xOverflow = false;
         split->getContainer<Flexable>()->gap = 0;
 
         //People
-        auto contacts = std::make_shared<PanelElement>();
+        auto contacts = PanelElement::make();
         split->addChild(contacts);
         contacts->getContainer()->width = {Container::Scale::Label::Pixel, 256.0f};
 
         //Your messages with the selected chatter
-        auto messages = std::make_shared<PanelElement>();
+        auto messages = PanelElement::make();
         split->addChild(messages);
         messages->getContainer()->width = {Container::Scale::Label::Auto, 0.0f};
         messages->fill = "secondary-fill";
         messages->border = "secondary-border";
 
-        auto messageSplit = std::make_shared<VerticalLayoutElement>();
+        auto messageSplit = VerticalLayoutElement::make();
         messageSplit->getContainer()->gap = {Container::Scale::Label::Pixel, 0.0f};
         messageSplit->getContainer<Vertical>()->yOverflow = false;
         messages->addChild(messageSplit);
-        auto messageSpacer = std::make_shared<FullLayoutElement>();
+        auto messageSpacer = FullLayoutElement::make();
         messageSplit->addChild(messageSpacer);
 
-        auto messageContents = std::make_shared<VerticalLayoutElement>();
+        auto messageContents = VerticalLayoutElement::make();
         messageSpacer->addChild(messageContents);
 
         //Add some text
-        auto text = std::make_shared<TextElement>();
+        auto text = TextElement::make();
         messageContents->addChild(text);
 
-        auto messageBox = std::make_shared<FullLayoutElement>();
+        auto messageBox = FullLayoutElement::make();
         messageBox->getContainer()->height = {Container::Scale::Label::Pixel, 64.0f};
 
-        auto messageHorizontalLayout = std::make_shared<HorizontalLayoutElement>();
+        auto messageHorizontalLayout = HorizontalLayoutElement::make();
         messageBox->addChild(messageHorizontalLayout);
 
-        auto textInput = std::make_shared<InputElement>();
+        auto textInput = InputElement::make();
         messageHorizontalLayout->addChild(textInput);
 
-        auto send = std::make_shared<ButtonElement>();
+        auto send = ButtonElement::make();
         messageHorizontalLayout->addChild(send);
         send->getContainer()->width = {Container::Scale::Label::Pixel, 48.0f};
         send->getContainer()->height = {Container::Scale::Label::Pixel, 48.0f};
@@ -114,7 +114,7 @@ public:
             std::cout << "Button pressed! Message sent!" << std::endl;
         };
 
-        auto icon = std::make_shared<ImageElement>();
+        auto icon = ImageElement::make();
         send->addChild(icon);
         icon->image = Texture::load(renderer, "Resources/Images/Send.png");
         icon->getContainer()->x = {Container::Position::Label::Percent, 0.5f};
@@ -127,7 +127,7 @@ public:
         messageSplit->addChild(messageBox);
 
 
-        auto mainLayer = std::make_shared<UILayer>(renderer);
+        auto mainLayer = UILayer::make(renderer);
         mainLayer->addElement(root);
 
         compositor->addLayer(mainLayer);
@@ -147,9 +147,9 @@ public:
                 quit();
             }
             if (auto* resize = event.as<WindowResizeEvent>()) {
-                target = std::make_shared<Texture>(renderer, Texture::Format::R8G8B8A8_SRGB, resize->realWidth,
-                                                   resize->realHeight, 1,
-                                                   BitFlag<Texture::Flags>({Texture::Flags::RenderTarget}));
+                target = Texture::make(renderer, Texture::Format::R8G8B8A8_SRGB, resize->realWidth,
+                                       resize->realHeight, 1,
+                                       BitFlag<Texture::Flags>({Texture::Flags::RenderTarget}));
             }
         }
         //endregion

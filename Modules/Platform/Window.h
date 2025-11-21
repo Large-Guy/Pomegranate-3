@@ -53,7 +53,7 @@ public:
 
     virtual void* getInternal() = 0;
 
-    static std::shared_ptr<Window> create();
+    static std::shared_ptr<Window> make();
 
 protected:
     virtual void rebuild() = 0;

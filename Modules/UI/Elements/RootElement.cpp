@@ -1,6 +1,6 @@
 #include "RootElement.h"
 
-RootElement::RootElement() : UIElement(std::make_shared<Container>()) {
+RootElement::RootElement() : UIElement(Container::make()) {
     auto container = getContainer();
     container->width = Container::Scale::Label::Pixel;
     container->height = Container::Scale::Label::Pixel;
@@ -15,4 +15,8 @@ void RootElement::render(Viewport screen, float scale, const std::shared_ptr<The
     container->width = screen.w;
     container->height = screen.h;
     container->compute(scale);
+}
+
+std::shared_ptr<RootElement> RootElement::make() {
+    return std::shared_ptr<RootElement>(new RootElement());
 }

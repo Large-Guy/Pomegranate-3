@@ -11,3 +11,7 @@ void Fill::computeRect(float scale) {
         child->rect.height = rect.height - yPadding * 2.0f;
     }
 }
+
+std::shared_ptr<Fill> Fill::make() {
+    return std::shared_ptr<Fill>(new Fill());
+}

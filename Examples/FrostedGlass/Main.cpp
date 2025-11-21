@@ -50,7 +50,7 @@ public:
     float time = 0.0;
 
     void start() override {
-        window = Window::create();
+        window = Window::make();
         window->setSize(1024, 720);
         window->setTitle("Window Example");
         window->open();

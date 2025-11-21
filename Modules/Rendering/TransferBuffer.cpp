@@ -47,3 +47,8 @@ void* TransferBuffer::getInternal() {
     return buffer;
 }
 
+std::shared_ptr<TransferBuffer> TransferBuffer::
+make(const std::shared_ptr<Renderer>& renderer, Type type, size_t size) {
+    return std::shared_ptr<TransferBuffer>(new TransferBuffer(renderer, type, size));
+}
+

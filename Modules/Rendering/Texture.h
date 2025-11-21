@@ -17,9 +17,6 @@ public:
         RenderTarget,
     };
 
-    Texture(const std::shared_ptr<Renderer>& renderer, Format format, int width, int height, int layers,
-            BitFlag<Flags> flags);
-
     ~Texture();
 
     void download(const std::shared_ptr<struct CopyPass>& renderPass, const std::shared_ptr<TransferBuffer>& output);
@@ -32,9 +29,16 @@ public:
 
     void* getInternal() const;
 
+    static std::shared_ptr<Texture> make(const std::shared_ptr<Renderer>& renderer, Format format, int width,
+                                         int height, int layers,
+                                         BitFlag<Flags> flags);
+
     static std::shared_ptr<Texture> load(const std::shared_ptr<Renderer>& renderer, const std::string& path);
 
 private:
+    Texture(const std::shared_ptr<Renderer>& renderer, Format format, int width, int height, int layers,
+            BitFlag<Flags> flags);
+
     std::shared_ptr<Renderer> renderer;
     struct SDL_GPUTexture* texture;
     Format format;

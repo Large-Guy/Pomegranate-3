@@ -14,15 +14,20 @@ void* Renderer::getInternal() const {
     return device;
 }
 
+std::shared_ptr<Renderer> Renderer::make() {
+    return std::shared_ptr<Renderer>(new Renderer());
+}
+
 std::weak_ptr<CommandBuffer> Renderer::begin() {
-    currentCommandQueue = std::make_shared<CommandBuffer>(shared_from_this());
+    currentCommandQueue = std::shared_ptr<CommandBuffer>(new CommandBuffer(shared_from_this()));
     return currentCommandQueue;
 }
 
 void Renderer::end() {
     if (!currentCommandQueue)
         return;
-    const auto pSubmitFence = SDL_SubmitGPUCommandBufferAndAcquireFence(static_cast<SDL_GPUCommandBuffer*>(currentCommandQueue->getInternal()));
+    const auto pSubmitFence = SDL_SubmitGPUCommandBufferAndAcquireFence(
+        static_cast<SDL_GPUCommandBuffer*>(currentCommandQueue->getInternal()));
     SDL_WaitForGPUFences(device, true, &pSubmitFence, 1);
     SDL_ReleaseGPUFence(device, pSubmitFence);
     currentCommandQueue.reset();

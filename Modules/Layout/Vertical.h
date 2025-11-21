@@ -6,6 +6,11 @@
 class Vertical final : public Flexable {
 public:
     void computeRect(float scale) override;
+
+    static std::shared_ptr<Vertical> make();
+
+protected:
+    Vertical() = default;
 };
 
 

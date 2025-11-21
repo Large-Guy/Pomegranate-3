@@ -16,7 +16,7 @@
 Window::~Window() = default;
 
 
-std::shared_ptr<Window> Window::create() {
+std::shared_ptr<Window> Window::make() {
     std::shared_ptr<Window> window = nullptr;
 #ifdef __APPLE__
     window = std::make_shared<MacOSWindow>();

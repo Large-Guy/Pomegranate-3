@@ -6,6 +6,11 @@
 class Horizontal : public Flexable {
 public:
     void computeRect(float scale) override;
+
+    static std::shared_ptr<Horizontal> make();
+
+protected:
+    Horizontal() = default;
 };
 
 

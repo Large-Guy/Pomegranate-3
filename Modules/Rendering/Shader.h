@@ -16,14 +16,18 @@ public:
 
     void* getInternal() const;
 
-    Shader(const std::shared_ptr<Renderer>& renderer, Type type, const std::string& path, uint32_t samplers,
-           uint32_t uniforms, uint32_t storages, uint32_t textures);
-
     ~Shader();
 
     Type type();
 
-protected:
+    static std::shared_ptr<Shader> make(const std::shared_ptr<Renderer>& renderer, Type type, const std::string& path,
+                                        uint32_t samplers,
+                                        uint32_t uniforms, uint32_t storages, uint32_t textures);
+
+private:
+    Shader(const std::shared_ptr<Renderer>& renderer, Type type, const std::string& path, uint32_t samplers,
+           uint32_t uniforms, uint32_t storages, uint32_t textures);
+
     void compile();
 
     std::shared_ptr<Renderer> renderer;

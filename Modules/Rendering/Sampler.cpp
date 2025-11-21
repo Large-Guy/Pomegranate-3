@@ -50,3 +50,7 @@ Sampler::Sampler(const std::shared_ptr<Renderer>& renderer, Filter filter, Wrap 
 void* Sampler::getInternal() {
     return this->sampler;
 }
+
+std::shared_ptr<Sampler> Sampler::make(const std::shared_ptr<Renderer>& renderer, Filter filter, Wrap wrap) {
+    return std::shared_ptr<Sampler>(new Sampler(renderer, filter, wrap));
+}

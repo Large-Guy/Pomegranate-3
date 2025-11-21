@@ -107,3 +107,7 @@ void DrawPass::drawPrimitives(int verticesCount, int vertexStart, int instancesC
     SDL_DrawGPUPrimitives(static_cast<SDL_GPURenderPass*>(renderPass), verticesCount, instancesCount, vertexStart,
                           instanceStart);
 }
+
+std::shared_ptr<DrawPass> DrawPass::make(const std::shared_ptr<Renderer>& renderer) {
+    return std::shared_ptr<DrawPass>(new DrawPass(renderer));
+}

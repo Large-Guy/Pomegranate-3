@@ -9,8 +9,6 @@
 
 class UILayer {
 public:
-    UILayer(const std::shared_ptr<Renderer>& compositor);
-
     std::shared_ptr<Texture> render(Viewport screen, float scale, const std::shared_ptr<Theme>& theme,
                                     const std::weak_ptr<CommandBuffer>& commandBuffer,
                                     const std::shared_ptr<Texture>& background);
@@ -21,7 +19,11 @@ public:
 
     void removeElement(int index);
 
+    static std::shared_ptr<UILayer> make(const std::shared_ptr<Renderer>& renderer);
+
 private:
+    UILayer(const std::shared_ptr<Renderer>& compositor);
+
     static void drawElements(Viewport screen, float scale, const std::shared_ptr<Theme>& theme,
                              const std::weak_ptr<CommandBuffer>& commandBuffer,
                              const std::shared_ptr<DrawPass>& drawPass,

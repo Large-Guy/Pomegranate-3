@@ -5,6 +5,9 @@
 
 class VerticalLayoutElement : public UIElement {
 public:
+    static std::shared_ptr<VerticalLayoutElement> make();
+
+protected:
     VerticalLayoutElement();
 };
 

@@ -69,3 +69,7 @@ void Horizontal::computeRect(float scale) {
         }
     }
 }
+
+std::shared_ptr<Horizontal> Horizontal::make() {
+    return std::shared_ptr<Horizontal>(new Horizontal());
+}

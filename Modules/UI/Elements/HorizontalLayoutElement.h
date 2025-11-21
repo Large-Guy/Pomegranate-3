@@ -4,6 +4,9 @@
 
 class HorizontalLayoutElement : public UIElement {
 public:
+    static std::shared_ptr<HorizontalLayoutElement> make();
+
+protected:
     HorizontalLayoutElement();
 };
 

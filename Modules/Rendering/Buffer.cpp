@@ -58,3 +58,7 @@ void Buffer::unbind(const std::shared_ptr<DrawPass>& pass) const {
 Buffer::Type Buffer::type() {
     return usage;
 }
+
+std::shared_ptr<Buffer> Buffer::make(const std::shared_ptr<Renderer>& renderer, Type usage, size_t size) {
+    return std::shared_ptr<Buffer>(new Buffer(renderer, usage, size));
+}

@@ -6,8 +6,6 @@
 
 class PanelElement : public UIElement {
 public:
-    PanelElement();
-
     void onAddedToLayer(const std::shared_ptr<Renderer>& renderer) override;
 
     void render(Viewport screen, float scale, const std::shared_ptr<Theme>& theme,
@@ -18,7 +16,11 @@ public:
     std::string fill = "primary-fill";
     std::string border = "primary-border";
 
+    static std::shared_ptr<PanelElement> make();
+
 protected:
+    PanelElement();
+
     struct alignas(16) PanelUniform {
         float screenX, screenY, screenW, screenH;
         float rectX, rectY, rectW, rectH;

@@ -30,8 +30,6 @@ public:
         Point,
     };
 
-    Pipeline(const std::shared_ptr<Renderer>& renderer, Texture::Format format);
-
     ~Pipeline();
 
     void vertex(const std::shared_ptr<Shader>& shader, const VertexDescription& description);
@@ -41,6 +39,8 @@ public:
     void primitive(PrimitiveType type);
 
     void fill(Pipeline::FillMode fillMode);
+
+    void format(Texture::Format format);
 
     void build();
 
@@ -55,12 +55,17 @@ public:
 
     void texture(int index, const std::shared_ptr<Texture>& texture, const std::shared_ptr<Sampler>& sampler);
 
+    static std::shared_ptr<Pipeline> make(const std::shared_ptr<Renderer>& renderer);
+
 private:
+    Pipeline(const std::shared_ptr<Renderer>& renderer);
+
+
     std::shared_ptr<Renderer> renderer;
     std::shared_ptr<Shader> vertexShader;
     VertexDescription vertexDescription;
     std::shared_ptr<Shader> fragmentShader;
-    Texture::Format format;
+    Texture::Format textureFormat;
     FillMode rasterizer;
     CullMode cull;
     PrimitiveType primitiveType;

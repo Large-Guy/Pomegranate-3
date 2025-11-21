@@ -20,3 +20,7 @@ void CopyPass::end() {
     renderPass = nullptr;
 }
 
+std::shared_ptr<CopyPass> CopyPass::make(const std::shared_ptr<Renderer>& renderer) {
+    return std::shared_ptr<CopyPass>(new CopyPass(renderer));
+}
+

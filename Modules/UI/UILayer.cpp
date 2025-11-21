@@ -12,10 +12,10 @@ std::shared_ptr<Texture> UILayer::render(Viewport screen, float scale, const std
                                          const std::shared_ptr<Texture>& background) {
     if (this->texture == nullptr || static_cast<float>(this->texture->width()) != screen.w || static_cast<float>(this->
             texture->height()) != screen.h) {
-        this->texture = std::make_shared<Texture>(renderer, Texture::Format::R8G8B8A8_SRGB, screen.w, screen.h, 1,
-                                                  BitFlag<Texture::Flags>({Texture::Flags::RenderTarget}));
+        this->texture = Texture::make(renderer, Texture::Format::R8G8B8A8_SRGB, screen.w, screen.h, 1,
+                                      BitFlag<Texture::Flags>({Texture::Flags::RenderTarget}));
     }
-    auto drawPass = std::make_shared<DrawPass>(renderer);
+    auto drawPass = DrawPass::make(renderer);
     drawPass->texture(texture);
     drawPass->clear({0.0f, 0.0f, 0.0f, 0.0f});
     drawPass->viewport(screen);
@@ -74,6 +74,10 @@ void UILayer::addElement(const std::shared_ptr<UIElement>& element) {
 void UILayer::removeElement(int index) {
     recurseElementRemoved(renderer, this->elements[index]);
     this->elements.erase(this->elements.begin() + index);
+}
+
+std::shared_ptr<UILayer> UILayer::make(const std::shared_ptr<Renderer>& renderer) {
+    return std::shared_ptr<UILayer>(new UILayer(renderer));
 }
 
 void UILayer::drawElements(Viewport screen, float scale, const std::shared_ptr<Theme>& theme,

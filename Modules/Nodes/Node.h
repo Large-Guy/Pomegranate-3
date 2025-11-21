@@ -3,16 +3,11 @@
 #include <memory>
 #include <vector>
 
-class Node {
-};
-
 template<typename T>
-class TreeNode : public Node, public std::enable_shared_from_this<T> {
+class TreeNode : public std::enable_shared_from_this<T> {
 public:
     using iterator = std::vector<std::shared_ptr<T> >::iterator;
     using const_iterator = std::vector<std::shared_ptr<T> >::const_iterator;
-
-    TreeNode() = default;
 
     virtual ~TreeNode() = default;
 
@@ -150,6 +145,8 @@ protected:
 
     virtual void onChildRemoved(const std::shared_ptr<T>& node) {
     }
+
+    TreeNode() = default;
 
 private:
     std::weak_ptr<T> parent;

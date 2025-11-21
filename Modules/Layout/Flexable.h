@@ -11,14 +11,15 @@ public:
         Trailing
     };
 
-    Flexable();
-
     Alignment xAlignment = Alignment::Leading;
     Alignment yAlignment = Alignment::Leading;
     bool xOverflow = false;
     bool yOverflow = false;
     bool xFill = false;
     bool yFill = false;
+
+protected:
+    Flexable() = default;
 };
 
 

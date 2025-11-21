@@ -22,8 +22,6 @@ public:
     using iterator = typename std::vector<std::shared_ptr<UIElement> >::iterator;
     using const_iterator = typename std::vector<std::shared_ptr<UIElement> >::const_iterator;
 
-    explicit UIElement(const std::shared_ptr<Container>& container);
-
     virtual ~UIElement();
 
     std::shared_ptr<Container> getContainer();
@@ -57,6 +55,8 @@ public:
     bool isHovered() const;
 
 protected:
+    explicit UIElement(const std::shared_ptr<Container>& container);
+
     void onChildAdded(const std::shared_ptr<UIElement>& child) override;
 
     void onChildRemoved(const std::shared_ptr<UIElement>& child) override;

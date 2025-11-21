@@ -10,8 +10,6 @@ public:
         Download
     };
 
-    TransferBuffer(std::shared_ptr<Renderer> renderer, Type type, size_t size);
-
     ~TransferBuffer();
 
     void* mapPtr() const;
@@ -27,7 +25,11 @@ public:
 
     void* getInternal();
 
+    static std::shared_ptr<TransferBuffer> make(const std::shared_ptr<Renderer>& renderer, Type type, size_t size);
+
 private:
+    TransferBuffer(std::shared_ptr<Renderer> renderer, Type type, size_t size);
+
     std::shared_ptr<Renderer> renderer;
     size_t bufferSize;
     struct SDL_GPUTransferBuffer* buffer;

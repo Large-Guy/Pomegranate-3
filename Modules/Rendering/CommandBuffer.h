@@ -5,15 +5,18 @@
 
 class CommandBuffer {
 public:
-    explicit CommandBuffer(const std::shared_ptr<class Renderer>& device);
-
     ~CommandBuffer();
 
     void* getInternal();
 
 private:
+    explicit CommandBuffer(const std::shared_ptr<class Renderer>& device);
+
+
     std::shared_ptr<class Renderer> device;
     struct SDL_GPUCommandBuffer* commandBuffer;
+
+    friend class Renderer;
 };
 
 

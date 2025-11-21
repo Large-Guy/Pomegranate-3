@@ -5,6 +5,9 @@
 
 class FullLayoutElement : public UIElement {
 public:
+    static std::shared_ptr<FullLayoutElement> make();
+
+protected:
     FullLayoutElement();
 };
 

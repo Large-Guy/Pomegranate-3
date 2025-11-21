@@ -74,3 +74,7 @@ void Vertical::computeRect(float scale) {
     }
 }
 
+std::shared_ptr<Vertical> Vertical::make() {
+    return std::shared_ptr<Vertical>(new Vertical());
+}
+

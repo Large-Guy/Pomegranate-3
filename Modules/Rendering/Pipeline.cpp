@@ -3,12 +3,12 @@
 
 #include "RenderPass.h"
 
-Pipeline::Pipeline(const std::shared_ptr<Renderer>& renderer, Texture::Format format) {
+Pipeline::Pipeline(const std::shared_ptr<Renderer>& renderer) {
     this->renderer = renderer;
     this->vertexShader = nullptr;
     this->fragmentShader = nullptr;
     this->pipeline = nullptr;
-    this->format = format;
+    this->textureFormat = Texture::Format::R8G8B8A8_SRGB;
 
     this->rasterizer = FillMode::Fill;
     this->cull = CullMode::None;
@@ -40,7 +40,7 @@ void Pipeline::fill(FillMode fillMode) {
 
 void Pipeline::build() {
     SDL_GPUTextureFormat form;
-    switch (format) {
+    switch (textureFormat) {
         case Texture::Format::R8G8B8A8_SRGB:
             form = SDL_GPU_TEXTUREFORMAT_R8G8B8A8_UNORM;
             break;
@@ -232,5 +232,9 @@ void Pipeline::texture(int index, const std::shared_ptr<Texture>& texture,
 
     samplers[index] = sampler;
     textures[index] = texture;
+}
+
+std::shared_ptr<Pipeline> Pipeline::make(const std::shared_ptr<Renderer>& renderer) {
+    return std::shared_ptr<Pipeline>(new Pipeline(renderer));
 }
 

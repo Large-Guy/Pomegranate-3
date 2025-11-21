@@ -80,17 +80,6 @@ Container::Position& Container::Position::operator=(Label label) {
     return *this;
 }
 
-Container::Container() {
-    reg("x", x);
-    reg("y", y);
-    reg("width", width);
-    reg("height", height);
-    reg("padding", padding);
-    reg("gap", gap);
-    reg("xPivot", xPivot);
-    reg("yPivot", yPivot);
-}
-
 void Container::computeRect(float scale) {
     for (const auto& child: *this) {
         child->rect.x = child->x.real(rect.x, rect.width, scale);
@@ -119,4 +108,8 @@ void Container::compute(float scale) {
 
 Container::Output Container::real() const {
     return rect;
+}
+
+std::shared_ptr<Container> Container::make() {
+    return std::shared_ptr<Container>(new Container());
 }

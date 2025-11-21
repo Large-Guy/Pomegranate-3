@@ -11,8 +11,6 @@
 
 class UICompositor {
 public:
-    explicit UICompositor(const std::shared_ptr<Renderer>& renderer);
-
     void addLayer(const std::shared_ptr<UILayer>& layer);
 
     std::shared_ptr<Texture> render(Viewport screen, float scale, const std::shared_ptr<Theme>& theme,
@@ -20,7 +18,11 @@ public:
 
     void pushEvent(Event& event) const;
 
+    static std::shared_ptr<UICompositor> make(const std::shared_ptr<Renderer>& renderer);
+
 private:
+    explicit UICompositor(const std::shared_ptr<Renderer>& renderer);
+
     std::shared_ptr<Renderer> renderer;
 
     std::shared_ptr<Texture> pong;

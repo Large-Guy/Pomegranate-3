@@ -4,8 +4,6 @@
 
 class DrawPass final : public RenderPass {
 public:
-    explicit DrawPass(const std::shared_ptr<Renderer>& renderer);
-
     ~DrawPass() override;
 
     void clear(Color color);
@@ -30,7 +28,12 @@ public:
 
     void drawPrimitives(int verticesCount, int vertexStart, int instancesCount, int instanceStart) const;
 
+    static std::shared_ptr<DrawPass> make(const std::shared_ptr<Renderer>& renderer);
+
 private:
+    explicit DrawPass(const std::shared_ptr<Renderer>& renderer);
+
+
     enum Elements {
         ElementClear,
         ElementViewport,

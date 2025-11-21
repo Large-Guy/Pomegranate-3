@@ -148,3 +148,8 @@ void Shader::compile() {
 Shader::Type Shader::type() {
     return stage;
 }
+
+std::shared_ptr<Shader> Shader::make(const std::shared_ptr<Renderer>& renderer, Type type, const std::string& path,
+                                     uint32_t samplers, uint32_t uniforms, uint32_t storages, uint32_t textures) {
+    return std::shared_ptr<Shader>(new Shader(renderer, type, path, samplers, uniforms, storages, textures));
+}

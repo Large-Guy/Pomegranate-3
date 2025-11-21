@@ -1,7 +1,6 @@
 #include "ButtonElement.h"
 
-ButtonElement::ButtonElement() {
-}
+ButtonElement::ButtonElement() = default;
 
 void ButtonElement::onPressed(MouseEvent::Button button) {
     onPress();
@@ -34,4 +33,8 @@ void ButtonElement::render(Viewport screen, float scale, const std::shared_ptr<T
     this->pipeline->uniform(Shader::Type::Fragment, 0, uniform);
 
     drawPass->drawPrimitives(6, 0, 1, 0);
+}
+
+std::shared_ptr<ButtonElement> ButtonElement::make() {
+    return std::shared_ptr<ButtonElement>(new ButtonElement());
 }

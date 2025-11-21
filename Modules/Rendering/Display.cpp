@@ -71,12 +71,12 @@ void Display::target(const std::weak_ptr<CommandBuffer>& queue, const std::share
         this->texture = SDL_CreateTexture(this->sdlRenderer, SDL_PIXELFORMAT_RGBA32, SDL_TEXTUREACCESS_STREAMING, width,
                                           height);
         int bytes = SDL_GetPixelFormatDetails(SDL_PIXELFORMAT_RGBA32)->bytes_per_pixel;
-        this->transferBuffer = std::make_shared<TransferBuffer>(renderer, TransferBuffer::Type::Download,
-                                                                width * height * bytes);
+        this->transferBuffer = TransferBuffer::make(renderer, TransferBuffer::Type::Download,
+                                                    width * height * bytes);
     }
 
     auto commandQueue = queue.lock();
-    auto copyPass = std::make_shared<CopyPass>(renderer);
+    auto copyPass = CopyPass::make(renderer);
     copyPass->begin(commandQueue);
 
     renderTexture->download(copyPass, transferBuffer);
@@ -132,4 +132,9 @@ void Display::present() {
         renderer->end();
     }
     toDisplay = nullptr;
+}
+
+std::shared_ptr<Display> Display::make(const std::shared_ptr<Renderer>& renderer,
+                                       const std::shared_ptr<Window>& window) {
+    return std::shared_ptr<Display>(new Display(renderer, window));
 }

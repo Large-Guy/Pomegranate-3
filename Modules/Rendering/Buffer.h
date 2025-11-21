@@ -12,8 +12,6 @@ public:
         Index,
     };
 
-    Buffer(const std::shared_ptr<Renderer>& renderer, Type usage, size_t size);
-
     ~Buffer();
 
     void upload(const std::shared_ptr<CopyPass>& pass, const std::shared_ptr<TransferBuffer>& data);
@@ -24,7 +22,12 @@ public:
 
     Type type();
 
+    static std::shared_ptr<Buffer> make(const std::shared_ptr<Renderer>& renderer, Type usage, size_t size);
+
 private:
+    Buffer(const std::shared_ptr<Renderer>& renderer, Type usage, size_t size);
+
+
     struct SDL_GPUBuffer* buffer;
     struct std::shared_ptr<Renderer> renderer;
     size_t size;

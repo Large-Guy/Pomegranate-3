@@ -7,7 +7,7 @@
 #include "Nodes/Node.h"
 
 
-class Container : public TreeNode<Container>, public Reflective {
+class Container : public TreeNode<Container> {
 public:
     virtual ~Container() = default;
 
@@ -85,13 +85,15 @@ public:
     Position xOffset = {Position::Label::Auto, 0.0f};
     Position yOffset = {Position::Label::Auto, 0.0f};
 
-    Container();
-
     void compute(float scale = 1.0f);
 
     [[nodiscard]] Output real() const;
 
+    static std::shared_ptr<Container> make();
+
 protected:
+    Container() = default;
+
     virtual void computeRect(float scale);
 };
 
