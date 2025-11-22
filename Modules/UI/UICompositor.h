@@ -13,6 +13,8 @@ class UICompositor {
 public:
     void addLayer(const std::shared_ptr<UILayer>& layer);
 
+    void update(float deltaTime);
+
     std::shared_ptr<Texture> render(Viewport screen, float scale, const std::shared_ptr<Theme>& theme,
                                     const std::weak_ptr<CommandBuffer>& commandBuffer);
 

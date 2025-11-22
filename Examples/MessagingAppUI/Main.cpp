@@ -94,6 +94,7 @@ public:
         //Add some text
         auto text = TextElement::make();
         messageContents->addChild(text);
+        text->text = "Hello, World!";
 
         auto messageBox = FullLayoutElement::make();
         messageBox->getContainer()->height = {Container::Scale::Label::Pixel, 64.0f};

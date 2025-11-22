@@ -7,6 +7,12 @@ UILayer::UILayer(const std::shared_ptr<Renderer>& renderer) {
     this->renderer = renderer;
 }
 
+void UILayer::update(float deltaTime) {
+    for (auto& element: elements) {
+        element->update(deltaTime);
+    }
+}
+
 std::shared_ptr<Texture> UILayer::render(Viewport screen, float scale, const std::shared_ptr<Theme>& theme,
                                          const std::weak_ptr<CommandBuffer>& commandBuffer,
                                          const std::shared_ptr<Texture>& background) {

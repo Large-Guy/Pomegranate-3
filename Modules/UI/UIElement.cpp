@@ -62,6 +62,9 @@ void UIElement::onPressed(MouseEvent::Button button) {
 void UIElement::onReleased(MouseEvent::Button button) {
 }
 
+void UIElement::update(float deltaTime) {
+}
+
 void UIElement::render(Viewport screen, float scale, const std::shared_ptr<Theme>& theme,
                        const std::weak_ptr<CommandBuffer>& commandBuffer,
                        const std::shared_ptr<DrawPass>& drawPass,

@@ -29,6 +29,12 @@ void UICompositor::addLayer(const std::shared_ptr<UILayer>& layer) {
     this->layers.push_back(layer);
 }
 
+void UICompositor::update(float deltaTime) {
+    for (auto& layer: this->layers) {
+        layer->update(deltaTime);
+    }
+}
+
 std::shared_ptr<Texture> UICompositor::render(Viewport screen, float scale, const std::shared_ptr<Theme>& theme,
                                               const std::weak_ptr<CommandBuffer>& commandBuffer) {
     if (ping == nullptr || ping->width() != static_cast<int>(screen.w) || ping->height() !=

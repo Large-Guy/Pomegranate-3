@@ -47,6 +47,8 @@ public:
 
     virtual void onReleased(MouseEvent::Button button);
 
+    virtual void update(float deltaTime);
+
     virtual void render(Viewport screen, float scale, const std::shared_ptr<Theme>& theme,
                         const std::weak_ptr<CommandBuffer>& commandBuffer,
                         const std::shared_ptr<DrawPass>& drawPass,
