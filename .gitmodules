@@ -1,12 +1,12 @@
 [submodule "ThirdParty/SDL3"]
-	path = ThirdParty/SDL3
+	path = Modules/ThirdParty/SDL3
 	url = https://github.com/libsdl-org/SDL.git
 [submodule "ThirdParty/SDL_shadercross"]
-	path = ThirdParty/SDL_shadercross
+	path = Modules/ThirdParty/SDL_shadercross
 	url = https://github.com/libsdl-org/SDL_shadercross.git
 [submodule "ThirdParty/SDL_ttf"]
-	path = ThirdParty/SDL_ttf
+	path = Modules/ThirdParty/SDL_ttf
 	url = https://github.com/libsdl-org/SDL_ttf.git
 [submodule "ThirdParty/SDL_image"]
-	path = ThirdParty/SDL_image
+	path = Modules/ThirdParty/SDL_image
 	url = https://github.com/libsdl-org/SDL_image.git
