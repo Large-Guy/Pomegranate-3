@@ -1,9 +1,0 @@
-{
-    "files.associations": {
-        "sdl_shadercross.h": "c",
-        "iterator": "c",
-        "initializer_list": "c",
-        "utility": "c",
-        "xutility": "c"
-    }
-}
